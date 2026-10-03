@@ -162,21 +162,24 @@ def render_livecards(accounts):
 
 def render_study_article(doc, lang):
     parts = []
+    # Canonical section ids per language (template TOC anchors); Tina may drop 'id' on save.
+    CANON_IDS = ["prophecies", "platform", "west", "king", "banners", "age", "soul", "duties"]
     for i, sec in enumerate(doc.get("sections", [])):
-        sid = sec.get("id") or f"{lang}-{i + 1}"
+        sid = sec.get("id") or f"{lang}-{CANON_IDS[i] if i < len(CANON_IDS) else i + 1}"
         blocks = []
         for b in sec.get("blocks", []):
-            src = render_source_line(b) if b.get("type") == "quote" else b.get("source", "")
-            blocks.append(STUDY_BLOCK_TPLS.get(b.get("type", "paragraph"), STUDY_BLOCK_TPLS["paragraph"])
+            btype = b.get("_template") or b.get("type") or "paragraph"
+            src = render_source_line(b) if btype == "quote" else b.get("source", "")
+            blocks.append(STUDY_BLOCK_TPLS.get(btype, STUDY_BLOCK_TPLS["paragraph"])
                           .format(text=esc(b.get("text", "")), source=esc(src)))
         parts.append(STUDY_SECTION_TPL.format(sid=sid, num=esc(sec.get("num", "")),
                                               title=esc(sec.get("title") or sec.get("heading") or sec.get("headingFa") or ""), blocks=BR.join(blocks)))
-    return BR.join(parts)
+    return ("\n\n").join(parts)
 
 
 def study_intro(html, lang, doc=None):
     art = re.search(r'<article class="article-wrap study-version" id="study-' + lang + r'"[^>]*>(.*?)</article>', html, re.S)
-    intro = re.search(r'<div class="article-intro">.*?</div>\s*</div>', art.group(1), re.S)
+    intro = re.search(r'[ \t]*<div class="article-intro">.*?</div>\s*</div>', art.group(1), re.S)
     block = intro.group(0) if intro else ""
     if not doc:
         return block
@@ -194,7 +197,7 @@ def study_intro(html, lang, doc=None):
     block = sub(r'(<p class="lead">).*?(</p>)', esc(d.get("lead")), block, re.S)
     block = sub(r'(<span class="titles-label">)[^<]*(</span>)', esc(d.get("titlesLabel")), block)
     if d.get("titleChips"):
-        chips = BR.join("              <li>%s%s</li>" % (
+        chips = BR.join("              <li>%s %s</li>" % (
             esc(c.get("name", "")), ("<small>%s</small>" % esc(c["meaning"])) if c.get("meaning") else "")
             for c in d["titleChips"])
         block = re.sub(r'(<ul class="title-chips">\s*\n).*?(\n\s*</ul>)',
@@ -382,9 +385,9 @@ def main():
     # ================= study.html =================
     std = open(os.path.join(TPL, "study.html"), encoding="utf-8").read()
     fa = re.search(r'(<article class="article-wrap study-version" id="study-fa"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
-    std = std[:fa.start(2)] + study_intro(std, "fa", study_fa) + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
+    std = std[:fa.start(2)] + study_intro(std, "fa", study_fa) + BR + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
     en = re.search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
-    std = std[:en.start(2)] + study_intro(std, "en", study_en) + BR + render_study_article(study_en, "en") + std[en.end(2):]
+    std = std[:en.start(2)] + study_intro(std, "en", study_en) + BR + BR + render_study_article(study_en, "en") + std[en.end(2):]
     std = apply_shell_copy(std, st)
     std = re.sub(r'(<meta name="description" content=")[^"]*(">)',
                  lambda m: m.group(1) + esc(study_fa.get("metaDescription") or st.get("metaDescriptionFa")) + m.group(2), std, count=1)
