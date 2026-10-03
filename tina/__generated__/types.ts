@@ -242,6 +242,7 @@ export type DocumentNode = Settings | Books | Youtube | Tiktok | Study | Folder;
 export type Settings = Node & Document & {
   __typename?: 'Settings';
   siteName?: Maybe<Scalars['String']['output']>;
+  homeTitle?: Maybe<Scalars['String']['output']>;
   tagline?: Maybe<Scalars['String']['output']>;
   metaDescriptionFa?: Maybe<Scalars['String']['output']>;
   heroKicker?: Maybe<Scalars['String']['output']>;
@@ -293,6 +294,7 @@ export type NumberFilter = {
 
 export type SettingsFilter = {
   siteName?: InputMaybe<StringFilter>;
+  homeTitle?: InputMaybe<StringFilter>;
   tagline?: InputMaybe<StringFilter>;
   metaDescriptionFa?: InputMaybe<StringFilter>;
   heroKicker?: InputMaybe<StringFilter>;
@@ -713,6 +715,7 @@ export type DocumentMutation = {
 
 export type SettingsMutation = {
   siteName?: InputMaybe<Scalars['String']['input']>;
+  homeTitle?: InputMaybe<Scalars['String']['input']>;
   tagline?: InputMaybe<Scalars['String']['input']>;
   metaDescriptionFa?: InputMaybe<Scalars['String']['input']>;
   heroKicker?: InputMaybe<Scalars['String']['input']>;
@@ -844,6 +847,7 @@ export type NumberFilter = {
 
 export type SettingsFilter = {
   siteName?: StringFilter | null | undefined;
+  homeTitle?: StringFilter | null | undefined;
   tagline?: StringFilter | null | undefined;
   metaDescriptionFa?: StringFilter | null | undefined;
   heroKicker?: StringFilter | null | undefined;
@@ -968,7 +972,7 @@ export type StudyFilter = {
   sections?: StudySectionsFilter | null | undefined;
 };
 
-export type SettingsPartsFragment = { __typename: 'Settings', siteName: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null };
+export type SettingsPartsFragment = { __typename: 'Settings', siteName: string | null, homeTitle: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null };
 
 export type BooksPartsFragment = { __typename: 'Books', variant: string | null, coverImage: string | null, coverAlt: string | null, coverRatio: number | null, restRotateY: number | null, restRotateX: number | null, spineLabel: string | null, titleFa: string | null, descriptionFa: string | null, pdfUrl: string | null, audioUrl: string | null, officialUrl: string | null };
 
@@ -988,7 +992,7 @@ export type SettingsQueryVariables = Exact<{
 }>;
 
 
-export type SettingsQuery = { settings: { __typename: 'Settings', id: string, siteName: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type SettingsQuery = { settings: { __typename: 'Settings', id: string, siteName: string | null, homeTitle: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type SettingsConnectionQueryVariables = Exact<{
   before?: string | null | undefined;
@@ -1000,7 +1004,7 @@ export type SettingsConnectionQueryVariables = Exact<{
 }>;
 
 
-export type SettingsConnectionQuery = { settingsConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Settings', id: string, siteName: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type SettingsConnectionQuery = { settingsConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Settings', id: string, siteName: string | null, homeTitle: string | null, tagline: string | null, metaDescriptionFa: string | null, heroKicker: string | null, heroTitle: string | null, heroTitleSuffix: string | null, heroParagraph: string | null, heroCtaLabel: string | null, aboutKicker: string | null, aboutTitle: string | null, aboutParagraph: string | null, booksKicker: string | null, booksTitle: string | null, booksParagraph: string | null, videosKicker: string | null, videosTitle: string | null, videosParagraph: string | null, liveKicker: string | null, liveTitle: string | null, liveParagraph: string | null, channelsKicker: string | null, channelsTitle: string | null, channelsParagraph: string | null, ctaTitle: string | null, ctaParagraph: string | null, tiktokApiBase: string | null, tiktokRefreshMs: number | null, footerNote: string | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type BooksQueryVariables = Exact<{
   relativePath: string;
@@ -1092,6 +1096,7 @@ export const SettingsPartsFragmentDoc = gql`
     fragment SettingsParts on Settings {
   __typename
   siteName
+  homeTitle
   tagline
   metaDescriptionFa
   heroKicker

@@ -9,6 +9,7 @@ export const SettingsPartsFragmentDoc = gql`
     fragment SettingsParts on Settings {
   __typename
   siteName
+  homeTitle
   tagline
   metaDescriptionFa
   heroKicker

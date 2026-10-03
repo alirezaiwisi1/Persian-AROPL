@@ -93,7 +93,7 @@ def apply_settings(html, st):
     """Refresh editable shell copy that is not list-driven."""
     repl = [
         (r'(<meta name="description" content=")[^"]*(">)', st.get("metaDescriptionFa")),
-        (r'(<title>)[^<]*(</title>)', (st.get("siteName") + " | " + st.get("tagline")) if st.get("siteName") and st.get("tagline") else st.get("siteName")),
+        (r'(<title>)[^<]*(</title>)', st.get("homeTitle") or st.get("siteName")),
         (r'(<div class="eyebrow">)[^<]*(</div>)', st.get("heroKicker")),
         (r'(<h1 id="hero-title">).*?(<br>)', esc(st.get("heroTitle")) + "<br>"),
         (r'(<h1 id="hero-title">.*?<span>)\([^<]*\)(</span></h1>)',
@@ -172,6 +172,9 @@ def main():
         study = fh.read()
     study = inject_content(study, payload)
     study = apply_settings(study, settings)
+    if study_en.get("pageTitle"):
+        study = re.sub(r'(<title>)[^<]*(</title>)',
+                       lambda m: m.group(1) + esc(study_en["pageTitle"]) + m.group(2), study, count=1)
 
     fa_art = re.search(r'(<article class="article-wrap study-version" id="study-fa"[^>]*>)(.*?)(\n    </article>)', study, re.S)
     en_art = re.search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>)(.*?)(\n    </article>)', study, re.S)

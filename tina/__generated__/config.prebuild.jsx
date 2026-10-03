@@ -25,6 +25,7 @@ var config_default = defineConfig({
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { name: "siteName", label: "\u0646\u0627\u0645 \u0633\u0627\u06CC\u062A \u2014 Site name", type: "string" },
+          { name: "homeTitle", label: "\u0639\u0646\u0648\u0627\u0646 \u062A\u0628 \u0635\u0641\u062D\u0647 \u0627\u0635\u0644\u06CC (title)", type: "string" },
           { name: "tagline", label: "\u0634\u0639\u0627\u0631 \u2014 Tagline", type: "string" },
           { name: "metaDescriptionFa", label: "\u062A\u0648\u0636\u06CC\u062D \u0645\u062A\u0627 \u2014 Meta description", type: "string", ui: { component: "textarea" } },
           { name: "heroKicker", label: "\u0647\u06CC\u0631\u0648 \u2014 \u0645\u062A\u0646 \u0628\u0627\u0644\u0627\u06CC \u0639\u0646\u0648\u0627\u0646", type: "string" },

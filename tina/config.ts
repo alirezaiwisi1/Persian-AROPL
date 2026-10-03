@@ -29,6 +29,7 @@ export default defineConfig({
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { name: "siteName", label: "نام سایت — Site name", type: "string" },
+          { name: "homeTitle", label: "عنوان تب صفحه اصلی (title)", type: "string" },
           { name: "tagline", label: "شعار — Tagline", type: "string" },
           { name: "metaDescriptionFa", label: "توضیح متا — Meta description", type: "string", ui: { component: "textarea" } },
           { name: "heroKicker", label: "هیرو — متن بالای عنوان", type: "string" },
