@@ -93,7 +93,7 @@ def apply_settings(html, st):
     """Refresh editable shell copy that is not list-driven."""
     repl = [
         (r'(<meta name="description" content=")[^"]*(">)', st.get("metaDescriptionFa")),
-        (r'(<title>)[^<]*(</title>)', st.get("siteName")),
+        (r'(<title>)[^<]*(</title>)', (st.get("siteName") + " | " + st.get("tagline")) if st.get("siteName") and st.get("tagline") else st.get("siteName")),
         (r'(<div class="eyebrow">)[^<]*(</div>)', st.get("heroKicker")),
         (r'(<h1 id="hero-title">).*?(<br>)', esc(st.get("heroTitle")) + "<br>"),
         (r'(<h1 id="hero-title">.*?<span>)\([^<]*\)(</span></h1>)',
