@@ -150,8 +150,11 @@ def render_livecards(accounts):
     out = []
     for a in sorted([a for a in accounts if a.get("username")],
                     key=lambda x: (x.get("order", 0), x.get("username", ""))):
+        av = (a.get("avatar") or "").lstrip("/")
+        if not av or not os.path.exists(os.path.join(PUB, av)):
+            av = "assets/images/tiktok/%s.webp" % a.get("username", "")
         data = dict(username=esc(a.get("username", "")), profileUrl=esc(a.get("profileUrl", "")),
-                    ariaLabel=esc(a.get("ariaLabel", "")), avatar=esc(a.get("avatar", "")),
+                    ariaLabel=esc(a.get("ariaLabel", "")), avatar=esc(av),
                     displayName=esc(a.get("displayName", "")))
         out.append((LIVECARD_FEATURED if (a.get("official") or a.get("featured")) else LIVECARD_PLAIN).format(**data))
     return BR.join(out)
