@@ -1,4 +1,17 @@
 {
   "slug": "manifesto",
-  "descriptionFa": "نسخه فارسی را بخوانید، PDF را دانلود کنید یا خوانش صوتی آن را در تلگرام دنبال کنید. نسخه انگلیسی هم در دسترس است."
+  "variant": "manifesto",
+  "coverImage": "assets/images/mahdis-manifesto-persian.webp",
+  "coverAlt": "جلد کتاب مانیفست مهدی",
+  "coverRatio": 0.646,
+  "restRotateY": -26,
+  "restRotateX": 4,
+  "spineLabel": "مانیفست مهدی",
+  "titleFa": "مانیفست<br><em>مهدی</em>",
+  "descriptionFa": "نسخه فارسی را بخوانید، PDF را دانلود کنید یا خوانش صوتی آن را در تلگرام دنبال کنید. نسخه انگلیسی هم در دسترس است.",
+  "pdfUrl": "assets/pdf/The_Mahdis_Manifesto_Booklet_Farsi.pdf",
+  "audioUrl": "https://t.me/theahmadireligion_farsi_channel/7127",
+  "officialUrl": "https://theahmadireligion.org/download/42616/?tmstv=1765124110",
+  "order": 0,
+  "coverWidth": 826
 }

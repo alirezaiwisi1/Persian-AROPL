@@ -6,10 +6,98 @@
       "url": "https://www.youtube.com/watch?v=UTHBV-XXf2A",
       "autoTitle": true,
       "thumb": "https://i.ytimg.com/vi/UTHBV-XXf2A/hqdefault.jpg",
-      "thumbAlt": "تست",
+      "thumbAlt": "ویدیوی منتخب فارسی 1",
       "channelLabel": "ویدیوی فارسی",
-      "title": "تست ویدیو",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=W9g-Pfiezlw",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/W9g-Pfiezlw/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 2",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=9-pGpY4d6yM",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/9-pGpY4d6yM/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 3",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=UXsOo7ZzvBI",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/UXsOo7ZzvBI/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 4",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=XMjP1ZygPTc",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/XMjP1ZygPTc/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 5",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=xnETzm-qyqo",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/xnETzm-qyqo/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 6",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=2IsTHGvTzG0",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/2IsTHGvTzG0/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 7",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=elADsCllEuo",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/elADsCllEuo/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 8",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=viMKt98ZZno",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/viMKt98ZZno/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 9",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=w-R6gELU3Q0",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/w-R6gELU3Q0/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی 10",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
       "ctaLabel": "مشاهده در YouTube ↗"
     }
-  ]
+  ],
+  "kicker": "PERSIAN CHANNEL",
+  "title": "یوتیوب فارسی",
+  "channelUrl": "https://youtube.com/@ahmadireligion_fa",
+  "channelAriaLabel": "ورود به کانال یوتیوب فارسی",
+  "channelImage": "assets/images/Persian_youtube.webp",
+  "channelImageAlt": "کانال یوتیوب فارسی",
+  "channelCta": "ورود به کانال ↗"
 }

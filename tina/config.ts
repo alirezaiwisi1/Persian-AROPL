@@ -136,7 +136,7 @@ export default defineConfig({
         format: "json",
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
-          { name: "pageTitle", label: "عنوان صفحه", type: "string" },
+          { name: "pageTitle", label: "عنوان تب (پیش‌فرض فارسی)", type: "string" },
           {
             name: "sections", label: "بخش‌ها", type: "object", list: true,
             ui: { itemProps: (item) => ({ label: (item?.num || "") + " " + (item?.title || "") }) },
