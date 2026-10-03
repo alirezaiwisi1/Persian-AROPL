@@ -60,6 +60,29 @@ export default defineConfig({
           },
           { name: "tiktokRefreshMs", label: "بازه به‌روزرسانی وضعیت (میلی‌ثانیه)", type: "number" },
           { name: "footerNote", label: "متن فوتر", type: "string" },
+          { name: "scrollCueText", label: "متن اسکرول‌کنید", type: "string" },
+          { name: "ctaKicker", label: "پایان صفحه — کیکر", type: "string" },
+          { name: "officialUrl", label: "وب‌سایت رسمی (لینک)", type: "string" },
+          { name: "officialLabel", label: "وب‌سایت رسمی (برچسب)", type: "string" },
+          {
+            name: "socialLinks", label: "شبکه‌های اجتماعی (کارت‌ها)", type: "object", list: true,
+            ui: { itemProps: (item) => ({ label: item?.label || item?.url || "لینک" }) },
+            fields: [
+              { name: "url", label: "لینک", type: "string" },
+              { name: "label", label: "عنوان", type: "string" },
+              { name: "sublabel", label: "زیرعنوان", type: "string" },
+              { name: "icon", label: "آیکن", type: "string", options: [{ value: "globe", label: "وب" }, { value: "telegram", label: "تلگرام" }, { value: "tiktok", label: "تیک‌تاک" }, { value: "youtube", label: "یوتیوب" }] },
+              { name: "size", label: "اندازه کارت", type: "string", options: [{ value: "normal", label: "معمولی" }, { value: "wide", label: "پهن" }, { value: "half", label: "نیمه" }] },
+            ],
+          },
+          {
+            name: "footerLinks", label: "پیوندهای فوتر", type: "object", list: true,
+            ui: { itemProps: (item) => ({ label: item?.label || item?.url || "لینک" }) },
+            fields: [
+              { name: "label", label: "عنوان", type: "string" },
+              { name: "url", label: "لینک", type: "string" },
+            ],
+          },
         ],
       },
       {
@@ -137,6 +160,28 @@ export default defineConfig({
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { name: "pageTitle", label: "عنوان تب (پیش‌فرض فارسی)", type: "string" },
+          { name: "metaDescription", label: "توضیح متا", type: "string", ui: { component: "textarea" } },
+          {
+            name: "intro", label: "معرفی ابتدای مقاله", type: "object",
+            fields: [
+              { name: "image", label: "تصویر", type: "image" },
+              { name: "imageAlt", label: "متن جایگزین تصویر", type: "string" },
+              { name: "badge", label: "نشان (badge)", type: "string" },
+              { name: "kicker", label: "کیکر", type: "string" },
+              { name: "title", label: "عنوان", type: "string" },
+              { name: "lead", label: "متن معرفی", type: "string", ui: { component: "textarea" } },
+              { name: "titlesLabel", label: "برچسب عناوین", type: "string" },
+              {
+                name: "titleChips", label: "عناوین (چیپ‌ها)", type: "object", list: true,
+                ui: { itemProps: (item) => ({ label: item?.name || "عنوان" }) },
+                fields: [
+                  { name: "name", label: "عنوان", type: "string" },
+                  { name: "meaning", label: "معنی", type: "string" },
+                ],
+              },
+              { name: "note", label: "یادداشت", type: "string", ui: { component: "textarea" } },
+            ],
+          },
           {
             name: "sections", label: "بخش‌ها", type: "object", list: true,
             ui: { itemProps: (item) => ({ label: (item?.num || "") + " " + (item?.title || "") }) },
@@ -159,10 +204,25 @@ export default defineConfig({
                     fields: [{ name: "text", label: "متن", type: "string" }],
                   },
                   {
-                    name: "quote", label: "نقل‌قول",
+                    name: "quote", label: "نقل‌قول / روایت",
                     fields: [
                       { name: "text", label: "متن نقل‌قول", type: "string", ui: { component: "textarea" } },
-                      { name: "source", label: "منبع", type: "string" },
+                      { name: "source", label: "منبع (به‌صورت یک خط — اگر فهرست منابع پر شود نادیده گرفته می‌شود)", type: "string" },
+                      {
+                        name: "sources", label: "فهرست منابع (ساختاریافته)", type: "object", list: true,
+                        description: "هر منبع یک آیتم؛ در سایت دقیقاً مثل قبل با «؛» جدا می‌شوند.",
+                        ui: { itemProps: (item) => ({ label: item?.book || item?.extra || "منبع" }) },
+                        fields: [
+                          { name: "book", label: "نام کتاب", type: "string" },
+                          { name: "author", label: "نویسنده / علامه", type: "string" },
+                          { name: "volume", label: "جلد", type: "string" },
+                          { name: "page", label: "صفحه", type: "string" },
+                          { name: "hadithNo", label: "شماره حدیث / روایت", type: "string" },
+                          { name: "chapter", label: "باب / فصل", type: "string" },
+                          { name: "url", label: "لینک منبع", type: "string" },
+                          { name: "extra", label: "متن کامل منبع (جایگزین ردیف خودکار)", type: "string" },
+                        ],
+                      },
                     ],
                   },
                 ],

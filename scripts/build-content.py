@@ -161,18 +161,96 @@ def render_study_article(doc, lang):
     parts = []
     for i, sec in enumerate(doc.get("sections", [])):
         sid = sec.get("id") or f"{lang}-{i + 1}"
-        blocks = [STUDY_BLOCK_TPLS.get(b.get("type", "paragraph"), STUDY_BLOCK_TPLS["paragraph"])
-                  .format(text=esc(b.get("text", "")), source=esc(b.get("source", "")))
-                  for b in sec.get("blocks", [])]
+        blocks = []
+        for b in sec.get("blocks", []):
+            src = render_source_line(b) if b.get("type") == "quote" else b.get("source", "")
+            blocks.append(STUDY_BLOCK_TPLS.get(b.get("type", "paragraph"), STUDY_BLOCK_TPLS["paragraph"])
+                          .format(text=esc(b.get("text", "")), source=esc(src)))
         parts.append(STUDY_SECTION_TPL.format(sid=sid, num=esc(sec.get("num", "")),
                                               title=esc(sec.get("title") or sec.get("heading") or sec.get("headingFa") or ""), blocks=BR.join(blocks)))
     return BR.join(parts)
 
 
-def study_intro(html, lang):
+def study_intro(html, lang, doc=None):
     art = re.search(r'<article class="article-wrap study-version" id="study-' + lang + r'"[^>]*>(.*?)</article>', html, re.S)
     intro = re.search(r'<div class="article-intro">.*?</div>\s*</div>', art.group(1), re.S)
-    return intro.group(0) if intro else ""
+    block = intro.group(0) if intro else ""
+    if not doc:
+        return block
+    d = doc.get("intro") or {}
+    def sub(pat, val, s, flags=0):
+        if not val:
+            return s
+        return re.sub(pat, lambda m: m.group(1) + val + m.group(2), s, count=1, flags=flags)
+    block = re.sub(r'(<div class="intro-media"><img src=")[^"]*(" alt=")[^"]*(")',
+                   lambda m: m.group(1) + esc(d.get("image") or "") + m.group(2) + esc(d.get("imageAlt") or "") + m.group(3),
+                   block, count=1)
+    block = sub(r'(<span class="intro-badge">)[^<]*(</span>)', esc(d.get("badge")), block)
+    block = sub(r'(<div class="intro-body">\s*<span class="kicker">)[^<]*(</span>)', esc(d.get("kicker")), block)
+    block = sub(r'(<span class="kicker">[^<]*</span>\s*<h2>).*?(</h2>)', esc(d.get("title")), block, re.S)
+    block = sub(r'(<p class="lead">).*?(</p>)', esc(d.get("lead")), block, re.S)
+    block = sub(r'(<span class="titles-label">)[^<]*(</span>)', esc(d.get("titlesLabel")), block)
+    if d.get("titleChips"):
+        chips = BR.join("              <li>%s%s</li>" % (
+            esc(c.get("name", "")), ("<small>%s</small>" % esc(c["meaning"])) if c.get("meaning") else "")
+            for c in d["titleChips"])
+        block = re.sub(r'(<ul class="title-chips">\s*\n).*?(\n\s*</ul>)',
+                       lambda m: m.group(1) + chips + m.group(2), block, count=1, flags=re.S)
+    block = sub(r'(<p class="intro-note">).*?(</p>)', esc(d.get("note")), block, re.S)
+    return block
+
+
+
+NET_ICONS = {
+    "globe": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.8 3 2.8 16 0 19M12 2.5c-2.8 3-2.8 16 0 19"/></svg>',
+    "telegram": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 3.6 2.7 11c-1.2.5-1.2 1.2-.2 1.5l4.9 1.5 1.9 5.8c.2.6.1.8.7.8.4 0 .6-.2.9-.4l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.7-.8L23 5c.3-1.3-.5-1.900-1.100-1.400ZM8.500 13.500l9.500-6c.4-.3.9-.1.5.2l-7.700 7-.3 3.200-2-4.400Z"/></svg>',
+    "tiktok": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.600 3c.3 2.400 1.700 4 4 4.200v3.100a7 7 0 0 1-4-1.300v6.200a5.600 5.600 0 1 1-5.600-5.600c.3 0 .6 0 .9.100v3.200a2.500 2.500 0 1 0 1.600 2.300V3h3.100Z"/></svg>',
+    "youtube": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8ZM9.600 15.500v-7l6.200 3.500-6.200 3.500Z"/></svg>',
+}
+NET_CARD_TPL = ('<a class="net-card{cls} reveal" href="{url}" target="_blank" rel="noopener">'
+                '<span class="net-icon" aria-hidden="true">{icon}</span>'
+                '<span class="net-text"><strong>{label}</strong><small>{sublabel}</small></span>'
+                '<b class="net-arrow" aria-hidden="true">↗</b></a>')
+
+
+def render_net_cards(links, st_icons=None):
+    out = []
+    for l in links or []:
+        size = l.get("size") or "normal"
+        cls = " net-wide" if size == "wide" else (" net-half" if size == "half" else " ")
+        out.append(NET_CARD_TPL.format(cls=cls, url=esc(l.get("url", "")),
+                                       icon=(st_icons or NET_ICONS).get(l.get("icon", "globe"), (st_icons or NET_ICONS)["globe"]),
+                                       label=esc(l.get("label", "")), sublabel=esc(l.get("sublabel", ""))))
+    return BR.join(["        " + x for x in out])
+
+
+def render_footer_links(links):
+    return "".join('<a href="%s"%s>%s</a>' % (
+        esc(l.get("url", "")),
+        ' target="_blank" rel="noopener"' if l.get("url", "").startswith("http") else "",
+        esc(l.get("label", ""))) for l in links or [])
+
+
+def render_source_line(quote):
+    """Render the <small> source exactly as before; structured sources[] if present."""
+    srcs = quote.get("sources")
+    if srcs:
+        parts = []
+        for s2 in srcs:
+            if s2.get("extra") and not s2.get("book"):
+                parts.append(s2["extra"])
+            else:
+                bits = [s2.get("book"), s2.get("author")]
+                if s2.get("volume"):
+                    bits.append("جلد " + s2["volume"])
+                if s2.get("page"):
+                    bits.append("ص. " + s2["page"])
+                if s2.get("hadithNo"):
+                    bits.append("حدیث " + s2["hadithNo"])
+                p = "، ".join(x for x in bits if x)
+                parts.append(p or s2.get("extra") or "")
+        return "؛ ".join(p for p in parts if p)
+    return quote.get("source", "")
 
 
 def apply_shell_copy(html, st):
@@ -187,15 +265,27 @@ def apply_shell_copy(html, st):
     html = sub(r'(<h1 id="hero-title">)[^<]*(<br>)', esc(st.get("heroTitle")), html)
     html = sub(r'(<h1 id="hero-title">[^<]*<br><span>)\([^<]*\)(</span></h1>)',
                "(" + esc(st.get("heroTitleSuffix")) + ")", html)
+    # hero paragraph: preserve <br> structure from JSON newlines
+    hp = esc(st.get("heroParagraph") or "").replace("\n", "<br>")
+    html = sub(r'(<h1 id="hero-title">.*?</h1>\s*\n\s*<p>).*?(</p>)', hp, html, re.S)
+    html = sub(r'(<a class="gold-button" href="study.html">)[^<]*(</a>)', esc(st.get("heroCtaLabel")), html)
+    html = re.sub(r'(<small>)(?:اسکرول کنید|Scroll)(</small>)',
+                  lambda m: m.group(1) + esc(st.get("scrollCueText") or "اسکرول کنید") + m.group(2), html, count=1)
+    # CTA section (ending)
+    def _cta(m):
+        return (m.group(1) + esc(st.get("ctaKicker") or "KEEP EXPLORING") + m.group(2) +
+                esc(st.get("ctaTitle") or "") + m.group(3) + esc(st.get("ctaParagraph") or "") + m.group(4))
+    html = re.sub(r'(<section class="cta-section[^"]*">.*?<span class="kicker">)[^<]*(</span><h2>)[^<]*(</h2><p>)[^<]*(</p>)',
+                  _cta, html, count=1, flags=re.S)
     for sec_id, prefix in (("about", "about"), ("books", "books"), ("videos", "videos"),
                            ("live", "live"), ("channels", "channels")):
-        blk = re.search(r'<section class="[^"]*" id="' + sec_id + r'">(.*?)</section>', html, re.S)
+        blk = re.search(r'<section[^>]*\sid="' + sec_id + r'"[^>]*>(.*?)</section>', html, re.S)
         if not blk:
             continue
         inner = blk.group(1)
         new_inner = re.sub(r'(<span class="kicker">)[^<]*(</span>)',
                            lambda m: m.group(1) + esc(st.get(prefix + "Kicker") or "") + m.group(2), inner, count=1)
-        new_inner = re.sub(r'(<h2>)[^<]*(</h2>)',
+        new_inner = re.sub(r'(<h2[^>]*>)[^<]*(</h2>)',
                            lambda m: m.group(1) + esc(st.get(prefix + "Title") or "") + m.group(2), new_inner, count=1)
         new_inner = re.sub(r'(<h2>[^<]*</h2>\s*<p>).*?(</p>)',
                            lambda m: m.group(1) + esc(st.get(prefix + "Paragraph") or "") + m.group(2), new_inner, count=1)
@@ -258,6 +348,29 @@ def main():
     idx = idx[:m3.start(1) + len(m3.group(1))] + render_livecards(accounts) + idx[m3.start(2):]
 
     idx = apply_shell_copy(idx, st)
+
+    # --- net-cards (social links) ---
+    mnc = re.search(r'(<div class="net-grid">\s*\n).*?(\n\s*</section>)', idx, re.S)
+    if mnc and st.get("socialLinks"):
+        idx = idx[:mnc.start(1) + len(mnc.group(1))] + render_net_cards(st["socialLinks"], st.get("socialIcons")) + idx[mnc.start(2):]
+    # --- footer links + brand ---
+    mfl = re.search(r'(<nav class="footer-links"[^>]*>).*?(</nav>)', idx, re.S)
+    if mfl and st.get("footerLinks"):
+        idx = idx[:mfl.start(1) + len(mfl.group(1))] + render_footer_links(st["footerLinks"]) + idx[mfl.start(2):]
+    fb = st.get("footerBrand") or {}
+    if fb:
+        idx = re.sub(r'(<footer class="site-footer">.*?<strong>)[^<]*(</strong><small>)[^<]*(</small>)',
+                     lambda m: m.group(1) + esc(fb.get("name") or "") + m.group(2) + esc(fb.get("sub") or "") + m.group(3),
+                     idx, count=1, flags=re.S)
+        idx = re.sub(r'(footer-brand"><img src=")[^"]*(" alt="[^"]*")',
+                     lambda m: m.group(1) + esc(fb.get("logo") or "assets/images/logo.webp") + m.group(2), idx, count=1)
+    mfn = re.search(r'(<div class="footer-note"><p>).*?(</p>)', idx, re.S)
+    if mfn:
+        idx = idx[:mfn.start(1) + len(mfn.group(1))] + esc(st.get("footerNote") or "") + idx[mfn.start(2):]
+    # --- official-site URLs inside books CTA + CTA section (single source of truth: officialUrl) ---
+    if st.get("officialUrl"):
+        idx = idx.replace('href="https://theahmadireligion.org/" target="_blank"',
+                          'href="%s" target="_blank"' % esc(st["officialUrl"]))
     home_title = st.get("homeTitle") or st.get("siteName")
     idx = re.sub(r'(<title>)[^<]*(</title>)', lambda m: m.group(1) + esc(home_title) + m.group(2), idx, count=1)
     with open(os.path.join(PUB, "index.html"), "w", encoding="utf-8") as fh:
@@ -266,9 +379,9 @@ def main():
     # ================= study.html =================
     std = open(os.path.join(TPL, "study.html"), encoding="utf-8").read()
     fa = re.search(r'(<article class="article-wrap study-version" id="study-fa"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
-    std = std[:fa.start(2)] + study_intro(std, "fa") + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
+    std = std[:fa.start(2)] + study_intro(std, "fa", study_fa) + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
     en = re.search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
-    std = std[:en.start(2)] + study_intro(std, "en") + BR + render_study_article(study_en, "en") + std[en.end(2):]
+    std = std[:en.start(2)] + study_intro(std, "en", study_en) + BR + render_study_article(study_en, "en") + std[en.end(2):]
     std = apply_shell_copy(std, st)
     std = re.sub(r'(<meta name="description" content=")[^"]*(">)',
                  lambda m: m.group(1) + esc(study_fa.get("metaDescription") or st.get("metaDescriptionFa")) + m.group(2), std, count=1)
