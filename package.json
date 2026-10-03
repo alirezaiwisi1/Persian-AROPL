@@ -8,7 +8,8 @@
     "build": "tinacms build --skip-cloud-checks --local && python3 scripts/build-content.py",
     "build:cloud": "tinacms build --skip-cloud-checks && python3 scripts/build-content.py",
     "deploy": "npm run build && npx wrangler deploy",
-    "preview": "npm run build && npx wrangler dev"
+    "preview": "npm run build && npx wrangler dev",
+    "pages:build": "tinacms build --skip-cloud-checks && python3 scripts/build-content.py"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +19,8 @@
     "tinacms": "^3.14.2",
     "typescript": "^7.0.2",
     "wrangler": "^4.147.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

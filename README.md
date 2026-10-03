@@ -84,3 +84,20 @@ The site answers on the Worker root and TinaCMS on `<worker-url>/admin`.
 ## WhatsApp / contact
 
 No secrets in this repo. Report security issues to the repository owner.
+
+
+## دیپلوی Cloudflare Pages (اتصال به گیت)
+
+Cloudflare Dashboard → Workers & Pages → Create → Pages → **Connect to Git** → انتخاب ریپوی `alirezaiwisi1/Persian-AROPL`:
+
+- **Framework preset:** None
+- **Build command:** `npm run pages:build`
+- **Build output directory:** `public`
+- **NODE_VERSION:** `20` (متغیر محیطی)
+
+**Environment variables (Production):**
+- `NEXT_PUBLIC_TINA_CLIENT_ID` = کلاینت ID پروژه Tina
+- `TINA_TOKEN` = توکن Read-Only پروژه Tina (فقط در تنظیمات Cloudflare — هرگز در کد نیست)
+- `GITHUB_BRANCH` = `main`
+
+بعد از این، هر تغییر در `/admin` تینا → commit به ریپو → دیپلوی خودکار Pages.
