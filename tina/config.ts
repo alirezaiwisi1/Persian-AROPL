@@ -1,6 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
+  clientSchemaVersion: "2",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
