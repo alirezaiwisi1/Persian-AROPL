@@ -1,11 +1,11 @@
 {
   "username": "aropl.afganistan",
   "displayName": "AROPL-Farsi/Dari",
-  "profileUrl": "https://www.tiktok.com/@aropl.afganistan",
-  "avatar": "assets/images/tiktok/aropl.afganistan.webp",
+  "profileUrl": "https://www.tiktok.com/@aropl.afganistan/live",
+  "avatar": "/assets/images/uploadsassets/images/tiktok/aropl.afganistan.webp",
   "ariaLabel": "AROPL-Farsi/Dari (@aropl.afganistan) در تیک‌تاک",
-  "featured": false,
   "official": false,
   "language": "fa",
-  "order": 1
+  "order": 1,
+  "featured": false
 }
