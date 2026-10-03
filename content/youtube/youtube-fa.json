@@ -1,0 +1,15 @@
+{
+  "slug": "youtube-fa",
+  "label": "youtube-fa-title",
+  "videos": [
+    {
+      "url": "https://www.youtube.com/watch?v=UTHBV-XXf2A",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/UTHBV-XXf2A/hqdefault.jpg",
+      "thumbAlt": "تست",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "تست ویدیو",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    }
+  ]
+}

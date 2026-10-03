@@ -1,0 +1,175 @@
+import { defineConfig } from "tinacms";
+
+export default defineConfig({
+  branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
+
+  // Credentials come from the environment only — never hard-coded.
+  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID ?? process.env.PUBLIC_TINA_CLIENT_ID,
+  token: process.env.TINA_TOKEN,
+
+  build: {
+    outputFolder: "admin",
+    publicFolder: "public",
+  },
+
+  media: {
+    tina: {
+      publicFolder: "public",
+      mediaRoot: "assets/images/uploads",
+    },
+  },
+
+  schema: {
+    collections: [
+      {
+        name: "settings",
+        label: "تنظیمات سایت — Site Settings",
+        path: "content/settings",
+        format: "json",
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          { name: "siteName", label: "نام سایت — Site name", type: "string" },
+          { name: "tagline", label: "شعار — Tagline", type: "string" },
+          { name: "metaDescriptionFa", label: "توضیح متا — Meta description", type: "string", ui: { component: "textarea" } },
+          { name: "heroKicker", label: "هیرو — متن بالای عنوان", type: "string" },
+          { name: "heroTitle", label: "هیرو — عنوان", type: "string" },
+          { name: "heroTitleSuffix", label: "هیرو — پسوند عنوان", type: "string" },
+          { name: "heroParagraph", label: "هیرو — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "heroCtaLabel", label: "هیرو — دکمه", type: "string" },
+          { name: "aboutKicker", label: "درباره — کیکر", type: "string" },
+          { name: "aboutTitle", label: "درباره — عنوان", type: "string" },
+          { name: "aboutParagraph", label: "درباره — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "booksKicker", label: "کتاب‌ها — کیکر", type: "string" },
+          { name: "booksTitle", label: "کتاب‌ها — عنوان", type: "string" },
+          { name: "booksParagraph", label: "کتاب‌ها — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "videosKicker", label: "ویدیوها — کیکر", type: "string" },
+          { name: "videosTitle", label: "ویدیوها — عنوان", type: "string" },
+          { name: "videosParagraph", label: "ویدیوها — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "liveKicker", label: "تیک‌تاک — کیکر", type: "string" },
+          { name: "liveTitle", label: "تیک‌تاک — عنوان", type: "string" },
+          { name: "liveParagraph", label: "تیک‌تاک — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "channelsKicker", label: "شبکه‌ها — کیکر", type: "string" },
+          { name: "channelsTitle", label: "شبکه‌ها — عنوان", type: "string" },
+          { name: "channelsParagraph", label: "شبکه‌ها — پاراگراف", type: "string", ui: { component: "textarea" } },
+          { name: "ctaTitle", label: "پایان صفحه — عنوان", type: "string" },
+          { name: "ctaParagraph", label: "پایان صفحه — پاراگراف", type: "string" },
+          {
+            name: "tiktokApiBase", label: "TikTok LIVE API base (backend URL)", type: "string",
+            description: "آدرس بک‌اند تشخیص پخش زنده. وضعیت LIVE همیشه از همین بک‌اند می‌آید.",
+          },
+          { name: "tiktokRefreshMs", label: "بازه به‌روزرسانی وضعیت (میلی‌ثانیه)", type: "number" },
+          { name: "footerNote", label: "متن فوتر", type: "string" },
+        ],
+      },
+      {
+        name: "books",
+        label: "کتاب‌ها — Books",
+        path: "content/books",
+        format: "json",
+        fields: [
+          { name: "variant", label: "شناسه ظاهری (مانند manifesto)", type: "string", description: "CSS modifier روی book-card—" },
+          { name: "coverImage", label: "جلد کتاب", type: "image" },
+          { name: "coverAlt", label: "متن جایگزین جلد", type: "string" },
+          { name: "coverRatio", label: "نسبت جلد (عرض/ارتفاع)", type: "number" },
+          { name: "restRotateY", label: "زاویه چرخش Y", type: "number" },
+          { name: "restRotateX", label: "زاویه چرخش X", type: "number" },
+          { name: "spineLabel", label: "عطف کتاب", type: "string" },
+          { name: "titleFa", label: "عنوان (می‌تواند شامل <br><em> باشد)", type: "string", ui: { component: "textarea" } },
+          { name: "descriptionFa", label: "توضیح", type: "string", ui: { component: "textarea" } },
+          { name: "pdfUrl", label: "لینک PDF", type: "string" },
+          { name: "audioUrl", label: "لینک خوانش صوتی (تلگرام)", type: "string" },
+          { name: "officialUrl", label: "لینک دانلود رسمی", type: "string" },
+        ],
+      },
+      {
+        name: "youtube",
+        label: "ویدیوهای یوتیوب — YouTube",
+        path: "content/youtube",
+        format: "json",
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          { name: "kicker", label: "کیکر", type: "string" },
+          { name: "title", label: "عنوان بلوک", type: "string" },
+          { name: "channelUrl", label: "لینک کانال", type: "string" },
+          { name: "channelAriaLabel", label: "برچسب دسترسی کانال", type: "string" },
+          { name: "channelImage", label: "تصویر کانال", type: "image" },
+          { name: "channelImageAlt", label: "متن جایگزین تصویر", type: "string" },
+          { name: "channelCta", label: "متن دکمه کانال", type: "string" },
+          {
+            name: "videos", label: "ویدیوها", type: "object", list: true,
+            ui: { itemProps: (item) => ({ label: item?.title || item?.url || "ویدیو" }) },
+            fields: [
+              { name: "url", label: "لینک یوتیوب", type: "string" },
+              { name: "autoTitle", label: "دریافت خودکار عنوان از یوتیوب", type: "boolean", description: "اگر روشن باشد عنوان از YouTube oEmbed گرفته می‌شود" },
+              { name: "thumb", label: "تصویر بندانگشتی", type: "string", description: "معمولاً https://i.ytimg.com/vi/<ID>/hqdefault.jpg" },
+              { name: "thumbAlt", label: "متن جایگزین تصویر", type: "string" },
+              { name: "channelLabel", label: "برچسب کانال", type: "string" },
+              { name: "title", label: "عنوان ویدیو", type: "string" },
+              { name: "ctaLabel", label: "متن دکمه", type: "string" },
+            ],
+          },
+        ],
+      },
+      {
+        name: "tiktok",
+        label: "حساب‌های تیک‌تاک — TikTok Profiles",
+        path: "content/tiktok",
+        format: "json",
+        description: "فقط اطلاعات ثابت پروفایل. وضعیت LIVE/OFFLINE همیشه از بک‌اند موجود می‌آید و از طریق تینا قابل تغییر نیست.",
+        fields: [
+          { name: "username", label: "نام کاربری تیک‌تاک", type: "string", description: "باید با نام فایل آواتار در assets/images/tiktok/ یکی باشد" },
+          { name: "displayName", label: "نام نمایشی", type: "string" },
+          { name: "profileUrl", label: "آدرس پروفایل", type: "string" },
+          { name: "avatar", label: "آواتار (assets/images/tiktok/<username>.webp)", type: "image" },
+          { name: "ariaLabel", label: "برچسب دسترسی", type: "string" },
+          { name: "official", label: "کانال رسمی فارسی (همیشه اول)", type: "boolean" },
+          { name: "language", label: "زبان (fa/en)", type: "string", options: ["fa", "en"] },
+          { name: "order", label: "ترتیب نمایش", type: "number" },
+          { name: "featured", label: "ویژه (کارت بزرگ)", type: "boolean" },
+        ],
+      },
+      {
+        name: "study",
+        label: "مطالعه — Study",
+        path: "content/study",
+        format: "json",
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          { name: "pageTitle", label: "عنوان صفحه", type: "string" },
+          {
+            name: "sections", label: "بخش‌ها", type: "object", list: true,
+            ui: { itemProps: (item) => ({ label: (item?.num || "") + " " + (item?.title || "") }) },
+            fields: [
+              { name: "num", label: "شماره", type: "string" },
+              { name: "title", label: "عنوان بخش", type: "string" },
+              {
+                name: "blocks", label: "محتوا", type: "object", list: true,
+                templates: [
+                  {
+                    name: "paragraph", label: "پاراگراف",
+                    fields: [{ name: "text", label: "متن", type: "string", ui: { component: "textarea" } }],
+                  },
+                  {
+                    name: "finalNote", label: "یادداشت پایانی",
+                    fields: [{ name: "text", label: "متن", type: "string" }],
+                  },
+                  {
+                    name: "subheading", label: "زیرعنوان",
+                    fields: [{ name: "text", label: "متن", type: "string" }],
+                  },
+                  {
+                    name: "quote", label: "نقل‌قول",
+                    fields: [
+                      { name: "text", label: "متن نقل‌قول", type: "string", ui: { component: "textarea" } },
+                      { name: "source", label: "منبع", type: "string" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+});

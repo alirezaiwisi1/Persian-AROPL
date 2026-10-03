@@ -1,0 +1,12 @@
+node_modules/
+.hugo_build.lock
+.DS_Store
+.env
+.env.*
+!.env.example
+wrangler.local.toml
+.dev.vars
+.tina/__generated__/.gitignore
+.wrangler/
+_extract.json
+tina/__generated__/
