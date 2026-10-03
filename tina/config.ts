@@ -187,7 +187,7 @@ export default defineConfig({
             name: "sections", label: "بخش‌ها", type: "object", list: true,
             ui: { itemProps: (item) => ({ label: (item?.num || "") + " " + (item?.title || "") }) },
             fields: [
-              { name: "id", label: "شناسه", type: "string", uid: true },
+              { name: "id", label: "شناسه", type: "string", uid: true, required: true },
               { name: "num", label: "شماره", type: "string" },
               { name: "title", label: "عنوان بخش", type: "string" },
               {
