@@ -259,6 +259,29 @@ def render_source_line(quote):
     return quote.get("source", "")
 
 
+def render_toc(html, fa_doc, en_doc):
+    """Rebuild the study TOC labels/anchors from Tina section titles (FA visible + data-fa, EN data-en)."""
+    def grab(doc):
+        return [(esc(s.get("id") or ""), esc(s.get("num") or ""), esc(s.get("title") or "")) for s in doc.get("sections", [])]
+    fa, en = grab(fa_doc), grab(en_doc)
+    n = min(len(fa), len(en), 8)
+    if n == 0:
+        return html
+    lis = []
+    for i in range(n):
+        fid, fnum, ftitle = fa[i]
+        eid, enum, etitle = en[i]
+        num = fnum or enum
+        lis.append(
+            '        <li><a class="toc-link" href="#{fid}" data-href-fa="#{fid}" data-href-en="#{eid}">'
+            '<i data-fa="{num}" data-en="{enum}">{num}</i>'
+            '<span data-fa="{ftitle}" data-en="{etitle}">{ftitle}</span></a></li>'.format(
+                fid=fid, eid=eid, num=num, enum=enum, ftitle=ftitle, etitle=etitle))
+    new_block = "\n".join(lis)
+    return re.sub(r'(      <ol class="toc-list">\n).*?(\n      </ol>)',
+                  lambda m: m.group(1) + new_block + m.group(2), html, count=1, flags=re.S)
+
+
 def apply_shell_copy(html, st):
     """1:1 value substitutions inside the original shell markup."""
     def sub(pat, val, s, flags=0):
@@ -388,6 +411,7 @@ def main():
     std = std[:fa.start(2)] + study_intro(std, "fa", study_fa) + BR + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
     en = re.search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
     std = std[:en.start(2)] + study_intro(std, "en", study_en) + BR + BR + render_study_article(study_en, "en") + std[en.end(2):]
+    std = render_toc(std, study_fa, study_en)
     std = apply_shell_copy(std, st)
     std = re.sub(r'(<meta name="description" content=")[^"]*(">)',
                  lambda m: m.group(1) + esc(study_fa.get("metaDescription") or st.get("metaDescriptionFa")) + m.group(2), std, count=1)
