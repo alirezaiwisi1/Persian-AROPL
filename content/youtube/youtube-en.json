@@ -98,6 +98,14 @@
       "channelLabel": "THE MAHDI HAS APPEARED",
       "title": "Featured video",
       "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://youtu.be/Tim45alAZw0?is=CYOM_4DET1v-TiHn",
+      "autoTitle": true
+    },
+    {
+      "url": "https://youtu.be/RReddIsQUUE?is=7WKrasIV-l_URhJK",
+      "autoTitle": true
     }
   ]
 }
