@@ -164,7 +164,8 @@ def normalize_youtube(v):
 
 
 def render_videos(vids):
-    vids = [dict(v) for v in vids]
+    # Storage order = newest last (Tina appends at end); display = newest first.
+    vids = [dict(v) for v in reversed(vids)]
     for v in vids:
         normalize_youtube(v)
     return BR.join(VIDEO_TPL.format(
