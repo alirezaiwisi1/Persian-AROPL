@@ -130,6 +130,24 @@ def render_books(books):
     return BR.join(out)
 
 
+YT_DEFAULTS = {
+    "fa": {"thumbAlt": "ویدیوی منتخب فارسی", "channelLabel": "ویدیو منتخب",
+           "title": "ویدیوی منتخب فارسی", "ctaLabel": "مشاهده در YouTube ↗"},
+    "en": {"thumbAlt": "Featured video", "channelLabel": "THE MAHDI HAS APPEARED",
+           "title": "Featured video", "ctaLabel": "Watch on YouTube ↗"},
+}
+
+
+def apply_video_defaults(vids, lang):
+    """Fill empty video fields with per-language defaults (user only pastes the URL)."""
+    d = YT_DEFAULTS.get(lang, YT_DEFAULTS["en"])
+    for v in vids:
+        for k, dv in d.items():
+            if not (v.get(k) or "").strip():
+                v[k] = dv
+    return vids
+
+
 def normalize_youtube(v):
     """Auto-fix any YouTube URL form (youtu.be/..., watch?v=..., with ?si=... etc.)
     to canonical watch URL and derive the thumbnail if missing/blank."""
@@ -388,7 +406,9 @@ def main():
     for label, slug in (("youtube-fa-title", "youtube-fa"), ("youtube-en-title", "youtube-en")):
         blk = re.search(r'(aria-labelledby="' + label + r'">\s*\n\s*<div class="youtube-block-heading">.*?<div class="video-scroller youtube-scroller">\s*\n).*?(\n        </div>\n      </div>\n)(?=\s*\n?\s*(?:<div class="youtube-block|</section>))', idx, re.S)
         data = youtube[slug]
-        inner = render_channel(data) + BR + render_videos(data.get("videos", []))
+        lang = "en" if slug.endswith("-en") else "fa"
+        vids = apply_video_defaults([dict(v) for v in data.get("videos", [])], lang)
+        inner = render_channel(data) + BR + render_videos(vids)
         idx = idx[:blk.start(1) + len(blk.group(1))] + inner + idx[blk.start(2):]
 
     m3 = re.search(r'(<div class="live-grid">\s*\n).*?(\n      </div>\n\n      <p class="live-note")', idx, re.S)
