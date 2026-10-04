@@ -130,7 +130,25 @@ def render_books(books):
     return BR.join(out)
 
 
+def normalize_youtube(v):
+    """Auto-fix any YouTube URL form (youtu.be/..., watch?v=..., with ?si=... etc.)
+    to canonical watch URL and derive the thumbnail if missing/blank."""
+    raw = (v.get("url") or "").strip()
+    m = (re.search(r"youtu\.be/([A-Za-z0-9_-]{6,})", raw)
+         or re.search(r"[?&]v=([A-Za-z0-9_-]{6,})", raw)
+         or re.search(r"youtube\.com/(?:embed|shorts|live)/([A-Za-z0-9_-]{6,})", raw))
+    if m:
+        vid = m.group(1)
+        v["url"] = "https://www.youtube.com/watch?v=" + vid
+        if not (v.get("thumb") or "").strip():
+            v["thumb"] = "https://i.ytimg.com/vi/" + vid + "/hqdefault.jpg"
+    return v
+
+
 def render_videos(vids):
+    vids = [dict(v) for v in vids]
+    for v in vids:
+        normalize_youtube(v)
     return BR.join(VIDEO_TPL.format(
         url=esc(v.get("url", "")), auto=' data-auto-title' if v.get("autoTitle") else '',
         thumb=esc(v.get("thumb", "")), thumbAlt=esc(v.get("thumbAlt", "")),
