@@ -1,6 +1,13 @@
 {
   "slug": "youtube-fa",
   "label": "youtube-fa-title",
+  "kicker": "PERSIAN CHANNEL",
+  "title": "یوتیوب فارسی",
+  "channelUrl": "https://youtube.com/@ahmadireligion_fa",
+  "channelAriaLabel": "ورود به کانال یوتیوب فارسی",
+  "channelImage": "assets/images/Persian_youtube.webp",
+  "channelImageAlt": "کانال یوتیوب فارسی",
+  "channelCta": "ورود به کانال ↗",
   "videos": [
     {
       "url": "https://www.youtube.com/watch?v=UTHBV-XXf2A",
@@ -91,13 +98,14 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "ویدیوی منتخب فارسی",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://youtu.be/NKHoohDvfN4?si=nVSZK9A8aPyOFov-",
+      "autoTitle": true,
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیو منتخب",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
-  ],
-  "kicker": "PERSIAN CHANNEL",
-  "title": "یوتیوب فارسی",
-  "channelUrl": "https://youtube.com/@ahmadireligion_fa",
-  "channelAriaLabel": "ورود به کانال یوتیوب فارسی",
-  "channelImage": "assets/images/Persian_youtube.webp",
-  "channelImageAlt": "کانال یوتیوب فارسی",
-  "channelCta": "ورود به کانال ↗"
+  ]
 }
