@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  clientSchemaVersion: "3",
+  clientSchemaVersion: "4",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
@@ -187,7 +187,7 @@ export default defineConfig({
             name: "sections", label: "بخش‌ها", type: "object", list: true,
             ui: { itemProps: (item) => ({ label: (item?.num || "") + " " + (item?.title || "") }) },
             fields: [
-              { name: "id", label: "شناسه", type: "string", uid: true, required: true },
+              { name: "id", label: "شناسه (خودکار — دست نزنید)", type: "string", required: true, ui: { component: "hidden" } },
               { name: "num", label: "شماره", type: "string" },
               { name: "title", label: "عنوان بخش", type: "string" },
               {
