@@ -106,6 +106,10 @@
       "channelLabel": "ویدیو منتخب",
       "title": "ویدیوی منتخب فارسی",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=qKwFnccZRRs",
+      "autoTitle": true
     }
   ]
 }
