@@ -552,9 +552,11 @@
   /* Centered snap: active card sits mid-screen, neighbours peek on both sides */
   .videos-section{padding-inline:0}
   .videos-section>.section-heading,.videos-section .youtube-block-heading{margin-inline:16px}
-  .videos-section .youtube-scroller{--card:76vw;grid-auto-columns:var(--card);gap:12px;
-    padding-inline:calc((100vw - var(--card))/2);scroll-padding-inline:calc((100vw - var(--card))/2)}
-  .videos-section .youtube-scroller .video-card{scroll-snap-align:center;scroll-snap-stop:always}
+  /* Tablet-like rail scaled down as a whole: cards shrink in BOTH width and height */
+  .videos-section .youtube-scroller{zoom:.62;grid-auto-columns:300px;gap:14px;
+    padding-inline:20px;scroll-padding-inline-start:20px}
+  .videos-section .youtube-scroller .video-card{scroll-snap-align:start;scroll-snap-stop:always}
+  .videos-section .youtube-scroller{scroll-padding-inline-start:16px}
   .videos-section .youtube-scroller .video-meta{padding:12px 14px 14px}
   .videos-section .youtube-scroller .video-meta h3{font-size:.86rem}
   .videos-section .youtube-scroller .video-meta p{display:block}
@@ -1225,4 +1227,18 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-avatar-ring,.live-avatar-live,.live-dot,.live-alert-dot,
   .live-card[data-state="live"] .live-badge:after,
   .live-card--featured:before,.live-status-pulse{animation:none!important}
+}
+
+/* ===== Mobile rail: pinned channel card + absorption (JS-driven, rail-scroll only) ===== */
+@media(max-width:560px){
+  .videos-section .youtube-scroller .channel-card{position:sticky;inset-inline-start:0;z-index:5}
+  .videos-section .youtube-scroller .channel-card:before{content:"";position:absolute;top:-4px;bottom:-4px;inset-inline-end:-26px;width:26px;background:linear-gradient(to right,rgba(9,10,12,0),rgba(9,10,12,.96));pointer-events:none;z-index:3}
+}
+/* Absorption target: the WHOLE card (thumbnail + title + meta + button shrink together) */
+.videos-section .youtube-scroller .video-card{
+  transform-origin:100% 50%;
+  will-change:transform,opacity;
+}
+@media (prefers-reduced-motion: reduce){
+  .videos-section .youtube-scroller .video-card{will-change:auto}
 }

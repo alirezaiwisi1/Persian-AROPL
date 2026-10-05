@@ -74,7 +74,8 @@
   const nf = new Intl.NumberFormat('fa-IR');
   document.querySelectorAll('.youtube-block').forEach(block => {
     const sc = block.querySelector('.youtube-scroller'), heading = block.querySelector('.youtube-block-heading');
-    const cards = [...sc.children], n = cards.length;
+    const cards = [...sc.children];
+    const n = cards.filter(el => !el.classList.contains('channel-card')).length;
     heading.insertAdjacentHTML('beforeend', `<div class="rail-nav"><button class="rail-btn" data-d="1" type="button" aria-label="قبلی">${chev('m9 6 6 6-6 6')}</button><span class="rail-count" aria-live="polite"></span><button class="rail-btn" data-d="-1" type="button" aria-label="بعدی">${chev('m15 6-6 6 6 6')}</button></div>`);
     sc.insertAdjacentHTML('afterend', `<div class="rail-foot" aria-hidden="true"><div class="rail-track"><i class="rail-thumb" style="--w:${100 / n}%"></i></div><div class="rail-hint"><i>‹</i><span>بکشید تا ویدیوهای بعدی را ببینید</span></div></div>`);
     const count = block.querySelector('.rail-count'), thumb = block.querySelector('.rail-thumb');
@@ -82,13 +83,39 @@
     const rtl = getComputedStyle(sc).direction === 'rtl';
     const update = () => {
       const max = sc.scrollWidth - sc.clientWidth, p = max > 0 ? Math.min(1, Math.abs(sc.scrollLeft) / max) : 0;
-      const i = Math.round(p * (n - 1));
-      count.textContent = `${nf.format(i + 1)} / ${nf.format(n)}`;
+      // Counter = nearest VIDEO card to the start edge (exact, animation-safe) — not a percent guess
+      const videoEls = cards.filter(el => !el.classList.contains('channel-card'));
+      const scRect = sc.getBoundingClientRect();
+      const sign = rtl ? -1 : 1;
+      let best = 0, bestD = Infinity;
+      videoEls.forEach((el, idx) => {
+        const r = el.getBoundingClientRect();
+        const d = Math.abs((r.left - scRect.left) * sign);
+        if (d < bestD) { bestD = d; best = idx; }
+      });
+      count.textContent = `${nf.format(best + 1)} / ${nf.format(n)}`;
       thumb.style.setProperty('--p', p.toFixed(3));
       prev.disabled = p < .02; next.disabled = p > .98;
       if (p > .02) block.classList.add('moved');
+      if (window.matchMedia('(max-width:560px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Absorption: each video card shrinks+fades as it passes the channel card's inner edge
+        const scR = sc.getBoundingClientRect();
+        const chCard = cards.find(el => el.classList.contains('channel-card'));
+        const absorbEdge = chCard ? chCard.getBoundingClientRect()[rtl ? 'left' : 'right'] : (rtl ? scR.left : scR.right);
+        videoEls.forEach(el => {
+          const r = el.getBoundingClientRect();
+          // t: 0 when the card's inner edge touches the channel's inner boundary, 1 when fully behind it
+          const inner = rtl ? r.right : r.left;
+          const t = Math.max(0, Math.min(1, ((inner - absorbEdge) / (r.width || 1)) * (rtl ? 1 : -1)));
+          const scale = 1 - 0.55 * t, op = 1 - t;
+          el.style.transform = t > 0 ? `scale(${scale.toFixed(3)})` : '';
+          el.style.opacity = op < 1 ? op.toFixed(3) : '';
+        });
+      }
     };
-    sc.addEventListener('scroll', update, { passive: true }); addEventListener('resize', update); update();
+    sc.addEventListener('scroll', update, { passive: true });
+    if ('onscrollend' in window) sc.addEventListener('scrollend', update, { passive: true }); // final recalc after snap settles
+    addEventListener('resize', update); update();
     [prev, next].forEach(b => b.addEventListener('click', () => {
       const step = cards[1].getBoundingClientRect().width + 14;
       const forward = b === next ? 1 : -1; sc.scrollBy({ left: forward * step * (rtl ? -1 : 1), behavior: 'smooth' });
