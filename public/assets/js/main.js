@@ -74,7 +74,9 @@
   const nf = new Intl.NumberFormat('fa-IR');
   document.querySelectorAll('.youtube-block').forEach(block => {
     const sc = block.querySelector('.youtube-scroller'), heading = block.querySelector('.youtube-block-heading');
-    const cards = [...sc.children], n = cards.length;
+    const cards = [...sc.children];
+    const videoCards = cards.filter(el => !el.classList.contains('channel-card'));
+    const n = videoCards.length;
     heading.insertAdjacentHTML('beforeend', `<div class="rail-nav"><button class="rail-btn" data-d="1" type="button" aria-label="قبلی">${chev('m9 6 6 6-6 6')}</button><span class="rail-count" aria-live="polite"></span><button class="rail-btn" data-d="-1" type="button" aria-label="بعدی">${chev('m15 6-6 6 6 6')}</button></div>`);
     sc.insertAdjacentHTML('afterend', `<div class="rail-foot" aria-hidden="true"><div class="rail-track"><i class="rail-thumb" style="--w:${100 / n}%"></i></div><div class="rail-hint"><i>‹</i><span>بکشید تا ویدیوهای بعدی را ببینید</span></div></div>`);
     const count = block.querySelector('.rail-count'), thumb = block.querySelector('.rail-thumb');

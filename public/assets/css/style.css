@@ -21,7 +21,10 @@
 .youtube-scroller .video-meta{padding:16px 18px 18px}
 .youtube-scroller .video-meta h3{margin:6px 0 4px}
 .youtube-scroller .video-meta p{font-size:.76rem}
-.youtube-scroller .channel-card{display:block}
+.youtube-scroller .channel-card{display:block;position:sticky;inset-inline-start:0;z-index:2}
+/* Fade edge: videos dissolve behind the pinned channel card */
+.youtube-scroller .channel-card:after{content:"";position:absolute;top:-6px;bottom:-6px;inset-inline-end:-22px;width:22px;background:linear-gradient(to var(--fade-dir,left),var(--bg),transparent);pointer-events:none}
+[dir="rtl"] .youtube-scroller .channel-card:after{--fade-dir:left}
 .channel-hero-card{min-height:100%;height:100%;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;background:radial-gradient(circle at 50% 25%,rgba(253,195,94,.13),transparent 48%),linear-gradient(145deg,#15171b,#090a0c);position:relative;overflow:hidden}
 .channel-hero-card:before{content:"";position:absolute;inset:12px;border:1px solid rgba(253,195,94,.17);pointer-events:none}
 .youtube-icon-large{width:76px;height:76px;display:grid;place-items:center;color:var(--gold);filter:drop-shadow(0 8px 20px rgba(253,195,94,.12));margin-bottom:12px}
@@ -454,18 +457,24 @@
 @media(max-width:560px){
   /* One primary card + a deliberate peek of the next card. */
   .youtube-scroller{
-    grid-auto-columns:86%;
-    gap:12px;
-    padding-right:14%;
+    grid-auto-columns:44vw;
+    gap:10px;
     padding-bottom:10px;
     overflow-x:auto;
     overflow-y:hidden;
     touch-action:pan-x;
   }
-  .youtube-scroller .video-card,
   .youtube-scroller .channel-card{
-    width:100%;
+    grid-auto-columns:none;
+    width:36vw;
+    min-width:36vw;
   }
+  .youtube-scroller .video-card{
+    width:44vw;
+    min-width:44vw;
+  }
+  .youtube-scroller .channel-hero-card{aspect-ratio:auto;min-height:0}
+  .youtube-scroller .channel-hero-card img{height:100%;object-fit:cover}
 
   /* General mobile controls become compact; book controls are intentionally excluded. */
   body .gold-button:not(.small),
@@ -552,8 +561,10 @@
   /* Centered snap: active card sits mid-screen, neighbours peek on both sides */
   .videos-section{padding-inline:0}
   .videos-section>.section-heading,.videos-section .youtube-block-heading{margin-inline:16px}
-  .videos-section .youtube-scroller{--card:76vw;grid-auto-columns:var(--card);gap:12px;
+  .videos-section .youtube-scroller{--card:44vw;grid-auto-columns:var(--card);gap:10px;
     padding-inline:calc((100vw - var(--card))/2);scroll-padding-inline:calc((100vw - var(--card))/2)}
+  .youtube-scroller .channel-card{width:36vw;min-width:36vw}
+  .youtube-scroller .video-card{width:var(--card);min-width:var(--card)}
   .videos-section .youtube-scroller .video-card{scroll-snap-align:center;scroll-snap-stop:always}
   .videos-section .youtube-scroller .video-meta{padding:12px 14px 14px}
   .videos-section .youtube-scroller .video-meta h3{font-size:.86rem}
@@ -1226,3 +1237,14 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-card[data-state="live"] .live-badge:after,
   .live-card--featured:before,.live-status-pulse{animation:none!important}
 }
+
+/* Pinned channel card: stays visible in horizontal scroll, videos fade behind its inner edge */
+@media(max-width:560px){
+  .videos-section .youtube-scroller .channel-overlay{inset:auto 8px 8px;padding:10px 12px;font-size:.72rem;white-space:nowrap;flex-wrap:nowrap;justify-content:center;gap:6px}
+  .videos-section .youtube-scroller .channel-overlay svg{width:14px;height:14px;flex:none}
+  .videos-section .youtube-scroller .channel-hero-card img{object-position:center top}
+  .videos-section .youtube-scroller .video-meta p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+/* Pinned channel card: stays visible in horizontal scroll, videos fade behind its inner edge */
+.youtube-scroller .channel-card{position:sticky;inset-inline-start:0;z-index:2}
+.youtube-scroller .channel-card:after{content:"";position:absolute;top:-6px;bottom:-6px;inset-inline-end:-10px;width:10px;background:linear-gradient(to left,var(--bg),transparent);pointer-events:none}
