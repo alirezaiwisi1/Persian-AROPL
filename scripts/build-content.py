@@ -411,6 +411,10 @@ def main():
         vids = apply_video_defaults([dict(v) for v in data.get("videos", [])], lang)
         inner = render_channel(data) + BR + render_videos(vids)
         idx = idx[:blk.start(1) + len(blk.group(1))] + inner + idx[blk.start(2):]
+        if lang == "en":
+            # EN rail is LTR: native left-to-right sliding
+            anchor = 'youtube-scroller">\n          <article class="video-card channel-card reveal">\n            <a href="' + str(data.get("channelUrl", ""))
+            idx = idx.replace(anchor, anchor.replace('youtube-scroller">', 'youtube-scroller" dir="ltr">'), 1)
 
     m3 = re.search(r'(<div class="live-grid">\s*\n).*?(\n      </div>\n\n      <p class="live-note")', idx, re.S)
     idx = idx[:m3.start(1) + len(m3.group(1))] + render_livecards(accounts) + idx[m3.start(2):]

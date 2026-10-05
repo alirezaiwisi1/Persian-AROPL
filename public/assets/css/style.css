@@ -549,18 +549,8 @@
   .books-stack .book-card,.books-stack .book-card--goal{grid-template-columns:1fr}
   .books-stack .book-card--goal .book-stage{order:0}
   .book-stage{min-height:420px;--h:min(300px,74vw);border-inline:0;border-bottom:1px solid rgba(255,255,255,.06)}
-  /* Centered snap: active card sits mid-screen, neighbours peek on both sides */
   .videos-section{padding-inline:0}
   .videos-section>.section-heading,.videos-section .youtube-block-heading{margin-inline:16px}
-  /* Tablet-like rail scaled down as a whole: cards shrink in BOTH width and height */
-  .videos-section .youtube-scroller{zoom:.62;grid-auto-columns:285px;gap:14px;
-    padding-inline:22px;scroll-padding-inline:321px 22px;scroll-snap-type:x proximity}
-  .videos-section .youtube-scroller .video-card{scroll-snap-align:start;scroll-snap-stop:always}
-  .videos-section .youtube-scroller .channel-card{scroll-snap-align:none}
-  .videos-section .youtube-scroller{scroll-padding-inline-start:16px}
-  .videos-section .youtube-scroller .video-meta{padding:12px 14px 14px}
-  .videos-section .youtube-scroller .video-meta h3{font-size:.86rem}
-  .videos-section .youtube-scroller .video-meta p{display:block}
 }
 @media(prefers-reduced-motion:reduce){.book-float{animation:none}}
 
@@ -1229,24 +1219,69 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-card[data-state="live"] .live-badge:after,
   .live-card--featured:before,.live-status-pulse{animation:none!important}
 }
-
-/* ===== Mobile rail: pinned channel card + absorption (JS-driven, rail-scroll only) ===== */
-@media(max-width:560px){
-  .videos-section .youtube-scroller .channel-card{position:sticky;inset-inline-start:0;z-index:5}
-  .videos-section .youtube-scroller .channel-card:before{content:"";position:absolute;top:-4px;bottom:-4px;inset-inline-end:-26px;width:26px;background:linear-gradient(to right,rgba(9,10,12,0),rgba(9,10,12,.96));pointer-events:none;z-index:3}
-  /* Golden "swallow" glow on the channel card's inner edge — intensity driven by JS (--absorb 0..1) */
-  .videos-section .youtube-scroller .channel-card:after{
-    content:"";position:absolute;top:6px;bottom:6px;inset-inline-end:-2px;width:6px;border-radius:4px;
-    background:var(--gold);opacity:calc(var(--absorb,0)*.85);
-    box-shadow:0 0 calc(6px + var(--absorb,0)*22px) calc(var(--absorb,0)*4px) rgba(253,195,94,calc(var(--absorb,0)*.55));
-    pointer-events:none;z-index:6;transition:opacity .12s linear;
+/* ===== V11 — consolidated responsive YouTube carousel (replaces all prior YouTube mobile layers) ===== */
+/* Equal card sizing + centered active card + peek + native snap + RTL/LTR aware. */
+.videos-section .youtube-scroller{
+  align-items:stretch;
+  --ycard:clamp(280px,62vw,420px); /* responsive card width: 1 card + peek on phones, multiple on desktop */
+  grid-auto-columns:var(--ycard);
+  gap:clamp(12px,1.6vw,18px);
+  padding-inline:max(clamp(16px,5vw,32px), calc((100% - var(--ycard))/2));
+  scroll-snap-type:x proximity;
+  overflow-x:auto;overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x pan-y; /* swipe horizontally, still allow vertical page scroll */
+  scroll-behavior:smooth;
+  padding-top:8px;margin-top:-8px;padding-bottom:12px;
+}
+.videos-section .youtube-scroller .video-card,
+.videos-section .youtube-scroller .channel-card{width:100%;height:100%;min-height:0;border-radius:12px}
+.videos-section .youtube-scroller .video-card{scroll-snap-align:center;scroll-snap-stop:always}
+.videos-section .youtube-scroller .channel-card{scroll-snap-align:center;scroll-snap-stop:always}
+/* Channel card: image fills the whole card, exactly like a video slide */
+.videos-section .youtube-scroller .channel-card{position:relative;display:block;background:#0d0e10}
+.videos-section .youtube-scroller .channel-card>a{display:block;height:100%;position:relative}
+.videos-section .youtube-scroller .channel-hero-card{position:relative;width:100%;height:100%;min-height:0;aspect-ratio:auto;padding:0;display:block;overflow:hidden;border-radius:12px;background:#08090a}
+.videos-section .youtube-scroller .channel-hero-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;transition:transform .4s ease,filter .3s ease}
+.videos-section .youtube-scroller .channel-card:hover .channel-hero-card img{transform:scale(1.025);filter:brightness(.82)}
+.videos-section .youtube-scroller .channel-hero-card:before{inset:0;border-radius:12px}
+.videos-section .youtube-scroller .channel-hero-card:after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(180deg,transparent,rgba(8,9,10,.92) 78%)}
+.videos-section .youtube-scroller .channel-overlay{inset:auto 14px 14px;z-index:3;padding:12px 14px;border-radius:10px;background:var(--gold);border:0;color:#17120a}
+.videos-section .youtube-scroller .channel-overlay svg{color:#17120a}
+.videos-section .youtube-scroller .channel-overlay svg path:last-child{fill:var(--gold)}
+/* Video thumbnails stay clean: 16:9, no overlay buttons */
+.videos-section .youtube-scroller .video-thumb{aspect-ratio:16/9;border-radius:12px 12px 0 0}
+.videos-section .youtube-scroller .video-meta{padding:12px 14px 14px}
+.videos-section .youtube-scroller .video-meta h3{font-size:.94rem}
+.videos-section .youtube-scroller .video-meta p{display:block}
+/* Desktop: roomy cards, multiple visible, arrows visible */
+@media(min-width:561px){
+  .videos-section .youtube-scroller .video-card{transition:transform .25s,border-color .25s}
+  .videos-section .youtube-scroller .video-card:hover{transform:translateY(-4px);border-color:rgba(253,195,94,.4)}
+}
+/* Wide desktop: a classic start-aligned rail showing several cards */
+@media(min-width:1101px){
+  .videos-section .youtube-scroller{
+    --ycard:clamp(300px,26vw,400px);
+    padding-inline:clamp(24px,4vw,56px);
+    scroll-snap-type:x proximity;
   }
+  .videos-section .youtube-scroller .video-card,
+  .videos-section .youtube-scroller .channel-card{scroll-snap-align:start}
 }
-/* Absorption target: the WHOLE card (thumbnail + title + meta + button shrink together) */
-.videos-section .youtube-scroller .video-card{
-  transform-origin:100% 50%;
-  will-change:transform,opacity;
+/* Desktop arrows step exactly one card (JS), RTL-aware */
+/* --- Tablet / phone: one centered card + peek (no zoom hacks, no sticky channel) --- */
+@media(max-width:560px){
+  .videos-section .youtube-scroller{
+    --ycard:calc(100vw - 92px); /* centered card + ~40px peek each side */
+    scroll-snap-type:x mandatory;
+  }
+  /* progress foot + hint visible on touch, arrows hidden */
+  .rail-btn{display:none}
+  .rail-foot{display:flex;flex-direction:column;gap:9px;margin:4px 16px 0}
 }
-@media (prefers-reduced-motion: reduce){
-  .videos-section .youtube-scroller .video-card{will-change:auto}
+@media(prefers-reduced-motion:reduce){
+  .videos-section .youtube-scroller{scroll-behavior:auto}
+  .videos-section .youtube-scroller .channel-hero-card img,
+  .videos-section .youtube-scroller .video-card{transition:none}
 }

@@ -75,60 +75,49 @@
   document.querySelectorAll('.youtube-block').forEach(block => {
     const sc = block.querySelector('.youtube-scroller'), heading = block.querySelector('.youtube-block-heading');
     const cards = [...sc.children];
-    const n = cards.filter(el => !el.classList.contains('channel-card')).length;
+    const videoEls = cards.filter(el => !el.classList.contains('channel-card'));
+    const n = videoEls.length;
     heading.insertAdjacentHTML('beforeend', `<div class="rail-nav"><button class="rail-btn" data-d="1" type="button" aria-label="قبلی">${chev('m9 6 6 6-6 6')}</button><span class="rail-count" aria-live="polite"></span><button class="rail-btn" data-d="-1" type="button" aria-label="بعدی">${chev('m15 6-6 6 6 6')}</button></div>`);
     sc.insertAdjacentHTML('afterend', `<div class="rail-foot" aria-hidden="true"><div class="rail-track"><i class="rail-thumb" style="--w:${100 / n}%"></i></div><div class="rail-hint"><i>‹</i><span>بکشید تا ویدیوهای بعدی را ببینید</span></div></div>`);
     const count = block.querySelector('.rail-count'), thumb = block.querySelector('.rail-thumb');
     const [prev, next] = block.querySelectorAll('.rail-btn');
     const rtl = getComputedStyle(sc).direction === 'rtl';
+
     const update = () => {
-      const max = sc.scrollWidth - sc.clientWidth, p = max > 0 ? Math.min(1, Math.abs(sc.scrollLeft) / max) : 0;
-      // Counter = nearest VIDEO card to the start edge (exact, animation-safe) — not a percent guess
-      const videoEls = cards.filter(el => !el.classList.contains('channel-card'));
-      const scRect = sc.getBoundingClientRect();
-      const sign = rtl ? -1 : 1;
-      let best = 0, bestD = Infinity;
-      videoEls.forEach((el, idx) => {
+      // Active card = the card whose center is nearest the scroller's center (works RTL & LTR)
+      const c = sc.getBoundingClientRect();
+      const mid = c.left + c.width / 2;
+      let best = -1, bestD = Infinity;
+      cards.forEach((el, i) => {
         const r = el.getBoundingClientRect();
-        const d = Math.abs((r.left - scRect.left) * sign);
-        if (d < bestD) { bestD = d; best = idx; }
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < bestD) { bestD = d; best = i; }
       });
-      count.textContent = `${nf.format(best + 1)} / ${nf.format(n)}`;
+      const activeIsChannel = cards[best] && cards[best].classList.contains('channel-card');
+      // Counter counts VIDEO cards; when the channel card is centered show 0 (start) as 1? Keep convention: channel = position of first video.
+      const idx = activeIsChannel ? 0 : videoEls.indexOf(cards[best]) + 1;
+      count.textContent = `${nf.format(Math.max(1, idx))} / ${nf.format(n)}`;
+      const max = sc.scrollWidth - sc.clientWidth;
+      const p = max > 0 ? Math.min(1, Math.abs(sc.scrollLeft) / max) : 0;
       thumb.style.setProperty('--p', p.toFixed(3));
-      prev.disabled = p < .02; next.disabled = p > .98;
+      prev.disabled = Math.abs(sc.scrollLeft) < 2;
+      next.disabled = Math.abs(sc.scrollLeft) >= max - 2;
       if (p > .02) block.classList.add('moved');
-      if (window.matchMedia('(max-width:560px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // Absorption: each video card shrinks+fades as it passes the channel card's inner edge
-        const scR = sc.getBoundingClientRect();
-        const chCard = cards.find(el => el.classList.contains('channel-card'));
-        const absorbEdge = chCard ? chCard.getBoundingClientRect()[rtl ? 'left' : 'right'] : (rtl ? scR.left : scR.right);
-        // glow: brightest while a card is mid-absorption (0.25..0.9), fades at full absorption
-        let glow = 0;
-        videoEls.forEach(el => {
-          const r = el.getBoundingClientRect();
-          // t: 0 when the card's inner edge touches the channel's inner boundary, 1 when fully behind it
-          const inner = rtl ? r.right : r.left;
-          const t = Math.max(0, Math.min(1, ((inner - absorbEdge) / (r.width || 1)) * (rtl ? 1 : -1)));
-          const scale = 1 - 0.55 * t, op = 1 - t;
-          el.style.transform = t > 0 ? `scale(${scale.toFixed(3)})` : '';
-          el.style.opacity = op < 1 ? op.toFixed(3) : '';
-          if (t > 0.05 && t < 0.95) glow = Math.max(glow, Math.sin(Math.PI * t));
-        });
-        if (chCard) chCard.style.setProperty('--absorb', glow.toFixed(3));
-      }
     };
-    sc.addEventListener('scroll', update, { passive: true });
-    if ('onscrollend' in window) sc.addEventListener('scrollend', update, { passive: true }); // final recalc after snap settles
-    addEventListener('resize', update); update();
-    [prev, next].forEach(b => b.addEventListener('click', () => {
-      const step = cards[1].getBoundingClientRect().width + 14;
-      const forward = b === next ? 1 : -1; sc.scrollBy({ left: forward * step * (rtl ? -1 : 1), behavior: 'smooth' });
-    }));
-  });
-  document.querySelectorAll('a[data-auto-title]').forEach(a => {
-    fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent(a.href))
-      .then(r => r.ok ? r.json() : Promise.reject()).then(j => {
-        if (!j.title) return; const h = a.querySelector('h3'); h.textContent = j.title; a.querySelector('img').alt = j.title;
-      }).catch(() => {});
+    let ticking = false;
+    sc.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+    if ('onscrollend' in window) sc.addEventListener('scrollend', update, { passive: true });
+    let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(update, 120); }); update();
+
+    // Step exactly one card; native RTL scrollLeft semantics handled via scrollIntoView on target card
+    const stepTo = dir => {
+      const c = sc.getBoundingClientRect();
+      const mid = c.left + c.width / 2;
+      let best = -1, bestD = Infinity;
+      cards.forEach((el, i) => { const r = el.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - mid); if (d < bestD) { bestD = d; best = i; } });
+      const t = Math.max(0, Math.min(cards.length - 1, best + dir));
+      if (t !== best) cards[t].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    };
+    [prev, next].forEach(b => b.addEventListener('click', () => stepTo(b === next ? 1 : -1)));
   });
 })();
