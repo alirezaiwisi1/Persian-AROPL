@@ -553,9 +553,10 @@
   .videos-section{padding-inline:0}
   .videos-section>.section-heading,.videos-section .youtube-block-heading{margin-inline:16px}
   /* Tablet-like rail scaled down as a whole: cards shrink in BOTH width and height */
-  .videos-section .youtube-scroller{zoom:.62;grid-auto-columns:300px;gap:14px;
-    padding-inline:20px;scroll-padding-inline-start:20px}
+  .videos-section .youtube-scroller{zoom:.62;grid-auto-columns:285px;gap:14px;
+    padding-inline:22px;scroll-padding-inline:321px 22px;scroll-snap-type:x proximity}
   .videos-section .youtube-scroller .video-card{scroll-snap-align:start;scroll-snap-stop:always}
+  .videos-section .youtube-scroller .channel-card{scroll-snap-align:none}
   .videos-section .youtube-scroller{scroll-padding-inline-start:16px}
   .videos-section .youtube-scroller .video-meta{padding:12px 14px 14px}
   .videos-section .youtube-scroller .video-meta h3{font-size:.86rem}
@@ -1233,6 +1234,13 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
 @media(max-width:560px){
   .videos-section .youtube-scroller .channel-card{position:sticky;inset-inline-start:0;z-index:5}
   .videos-section .youtube-scroller .channel-card:before{content:"";position:absolute;top:-4px;bottom:-4px;inset-inline-end:-26px;width:26px;background:linear-gradient(to right,rgba(9,10,12,0),rgba(9,10,12,.96));pointer-events:none;z-index:3}
+  /* Golden "swallow" glow on the channel card's inner edge — intensity driven by JS (--absorb 0..1) */
+  .videos-section .youtube-scroller .channel-card:after{
+    content:"";position:absolute;top:6px;bottom:6px;inset-inline-end:-2px;width:6px;border-radius:4px;
+    background:var(--gold);opacity:calc(var(--absorb,0)*.85);
+    box-shadow:0 0 calc(6px + var(--absorb,0)*22px) calc(var(--absorb,0)*4px) rgba(253,195,94,calc(var(--absorb,0)*.55));
+    pointer-events:none;z-index:6;transition:opacity .12s linear;
+  }
 }
 /* Absorption target: the WHOLE card (thumbnail + title + meta + button shrink together) */
 .videos-section .youtube-scroller .video-card{

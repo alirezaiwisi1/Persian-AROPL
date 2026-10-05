@@ -102,6 +102,8 @@
         const scR = sc.getBoundingClientRect();
         const chCard = cards.find(el => el.classList.contains('channel-card'));
         const absorbEdge = chCard ? chCard.getBoundingClientRect()[rtl ? 'left' : 'right'] : (rtl ? scR.left : scR.right);
+        // glow: brightest while a card is mid-absorption (0.25..0.9), fades at full absorption
+        let glow = 0;
         videoEls.forEach(el => {
           const r = el.getBoundingClientRect();
           // t: 0 when the card's inner edge touches the channel's inner boundary, 1 when fully behind it
@@ -110,7 +112,9 @@
           const scale = 1 - 0.55 * t, op = 1 - t;
           el.style.transform = t > 0 ? `scale(${scale.toFixed(3)})` : '';
           el.style.opacity = op < 1 ? op.toFixed(3) : '';
+          if (t > 0.05 && t < 0.95) glow = Math.max(glow, Math.sin(Math.PI * t));
         });
+        if (chCard) chCard.style.setProperty('--absorb', glow.toFixed(3));
       }
     };
     sc.addEventListener('scroll', update, { passive: true });
