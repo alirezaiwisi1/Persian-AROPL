@@ -82,8 +82,9 @@
     const rtl = getComputedStyle(sc).direction === 'rtl';
     const update = () => {
       const max = sc.scrollWidth - sc.clientWidth, p = max > 0 ? Math.min(1, Math.abs(sc.scrollLeft) / max) : 0;
-      const i = Math.round(p * (n - 1));
-      count.textContent = `${nf.format(i + 1)} / ${nf.format(n)}`;
+      const nv = Math.max(0, n - 1); /* video count excludes the channel-entry card */
+      const i = Math.min(nv, Math.max(1, Math.round(p * (n - 1))));
+      count.textContent = `${nf.format(i)} / ${nf.format(nv)}`;
       thumb.style.setProperty('--p', p.toFixed(3));
       prev.disabled = p < .02; next.disabled = p > .98;
       if (p > .02) block.classList.add('moved');

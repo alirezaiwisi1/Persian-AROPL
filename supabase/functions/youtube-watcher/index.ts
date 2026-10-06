@@ -63,7 +63,7 @@ async function fetchFeed(channelId: string): Promise<{ id: string; title: string
   if (!res.ok) throw new Error(`feed ${channelId} HTTP ${res.status}`);
   const xml = await res.text();
   const entries = xml.split("<entry>").slice(1);
-  return entries.slice(0, 8).map((e) => {
+  const vids = entries.slice(0, 12).map((e) => {
     const id = e.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1] ?? "";
     const title =
       e.match(/<title>([\s\S]*?)<\/title>/)?.[1]
@@ -71,6 +71,24 @@ async function fetchFeed(channelId: string): Promise<{ id: string; title: string
         .trim() ?? "";
     return { id, title };
   }).filter((v) => /^[A-Za-z0-9_-]{6,}$/.test(v.id));
+  // Only regular "Videos"-tab uploads — skip Shorts (and anything that redirects there).
+  const isRegular: boolean[] = await Promise.all(vids.map((v) => isRegularVideo(v.id)));
+  return vids.filter((_, i) => isRegular[i]);
+}
+
+/** true = regular upload (Videos tab); false = Short or unknown/removed. */
+async function isRegularVideo(videoId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
+      method: "HEAD",
+      redirect: "follow",
+      headers: { "user-agent": "aropl-yt-watcher/1.0" },
+    });
+    // A Short resolves to a /shorts/ URL; a regular video redirects to /watch?v=…
+    return !new URL(res.url).pathname.startsWith("/shorts/");
+  } catch {
+    return false; // unknown → do not add (safe default)
+  }
 }
 
 async function getJsonFile(file: string): Promise<{ sha: string; data: any }> {
