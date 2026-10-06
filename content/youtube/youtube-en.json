@@ -106,6 +106,78 @@
     {
       "url": "https://youtu.be/RReddIsQUUE?is=7WKrasIV-l_URhJK",
       "autoTitle": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Bkw9UREv51s",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/Bkw9UREv51s/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=OjjU1IGAzlk",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/OjjU1IGAzlk/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=ehVTEGbAIdE",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/ehVTEGbAIdE/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=3Ur4taRlbuA",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/3Ur4taRlbuA/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=RReddIsQUUE",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/RReddIsQUUE/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=vETYkK3FZV8",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/vETYkK3FZV8/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=Tim45alAZw0",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/Tim45alAZw0/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=0MJDFjiCPhU",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/0MJDFjiCPhU/hqdefault.jpg",
+      "thumbAlt": "Featured video",
+      "channelLabel": "Featured video",
+      "title": "Featured video",
+      "ctaLabel": "Watch on YouTube ↗"
     }
   ]
 }
