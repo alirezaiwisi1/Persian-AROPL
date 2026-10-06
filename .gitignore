@@ -10,3 +10,4 @@ wrangler.local.toml
 .wrangler/
 _extract.json
 tina/__generated__/
+supabase/.temp/
