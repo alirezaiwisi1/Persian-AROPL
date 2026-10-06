@@ -126,5 +126,7 @@
       "label": "وب‌سایت رسمی ↗",
       "url": "https://theahmadireligion.org/"
     }
-  ]
+  ],
+  "supabaseUrl": "https://lqimjiwxijzojtewcsar.supabase.co",
+  "supabaseAnonKey": ""
 }

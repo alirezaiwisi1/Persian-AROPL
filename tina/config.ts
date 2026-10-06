@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  clientSchemaVersion: "4",
+  clientSchemaVersion: "5",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
@@ -60,6 +60,9 @@ export default defineConfig({
             description: "آدرس بک‌اند تشخیص پخش زنده. وضعیت LIVE همیشه از همین بک‌اند می‌آید.",
           },
           { name: "tiktokRefreshMs", label: "بازه به‌روزرسانی وضعیت (میلی‌ثانیه)", type: "number" },
+          { name: "supabaseUrl", label: "Supabase URL (realtime لایو — اختیاری)", type: "string",
+            description: "اگر خالی باشد، لایهٔ realtime غیرفعال است و همان polling قدیمی کار می‌کند." },
+          { name: "supabaseAnonKey", label: "Supabase Anon Key (public)", type: "string" },
           { name: "footerNote", label: "متن فوتر", type: "string" },
           { name: "scrollCueText", label: "متن اسکرول‌کنید", type: "string" },
           { name: "ctaKicker", label: "پایان صفحه — کیکر", type: "string" },

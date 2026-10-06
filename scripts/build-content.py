@@ -395,8 +395,9 @@ def main():
             "   (no trailing slash). LIVE/OFFLINE detection always comes from that backend. */\n"
             "window.AROPL_CONFIG = {\n"
             "  TIKTOK_API_BASE: %s,\n"
-            "  TIKTOK_REFRESH_MS: %s\n"
-            "};\n" % (json.dumps(st.get("tiktokApiBase", "")), json.dumps(st.get("tiktokRefreshMs", 30000))))
+            "  TIKTOK_REFRESH_MS: %s%s\n"
+            "};\n" % (json.dumps(st.get("tiktokApiBase", "")), json.dumps(st.get("tiktokRefreshMs", 30000)),
+                      (",\n  SUPABASE_URL: %s,\n  SUPABASE_ANON_KEY: %s\n" % (json.dumps(st.get("supabaseUrl", "")), json.dumps(st.get("supabaseAnonKey", "")))) if st.get("supabaseUrl") else ""))
 
     # ================= index.html =================
     idx = open(os.path.join(TPL, "index.html"), encoding="utf-8").read()
