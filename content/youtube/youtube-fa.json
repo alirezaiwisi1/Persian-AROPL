@@ -110,6 +110,69 @@
     {
       "url": "https://www.youtube.com/watch?v=qKwFnccZRRs",
       "autoTitle": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=8gReXI3EiRE",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/8gReXI3EiRE/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=X27IueMCR7o",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/X27IueMCR7o/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=WQR7xJ9Gzos",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/WQR7xJ9Gzos/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=RISZk0ag6_g",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/RISZk0ag6_g/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=NKHoohDvfN4",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/NKHoohDvfN4/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=c26V-b38lgw",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/c26V-b38lgw/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=M-UPtEcrcLg",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/M-UPtEcrcLg/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
