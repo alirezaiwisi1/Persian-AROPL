@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  clientSchemaVersion: "5",
+  clientSchemaVersion: "6",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
@@ -63,6 +63,8 @@ export default defineConfig({
           { name: "supabaseUrl", label: "Supabase URL (realtime لایو — اختیاری)", type: "string",
             description: "اگر خالی باشد، لایهٔ realtime غیرفعال است و همان polling قدیمی کار می‌کند." },
           { name: "supabaseAnonKey", label: "Supabase Anon Key (public)", type: "string" },
+          { name: "siteLogo", label: "لگوی سایت (هدر + فوتر)", type: "image",
+            description: "تصویر مربعی (ترجیحاً PNG/WebP شفاف، حداقل ۵۱۲×۵۱۲). خالی = لگوی پیش‌فرض assets/images/logo.webp." },
           { name: "footerNote", label: "متن فوتر", type: "string" },
           { name: "scrollCueText", label: "متن اسکرول‌کنید", type: "string" },
           { name: "ctaKicker", label: "پایان صفحه — کیکر", type: "string" },

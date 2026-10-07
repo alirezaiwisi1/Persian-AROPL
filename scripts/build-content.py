@@ -321,6 +321,10 @@ def render_toc(html, fa_doc, en_doc):
 
 def apply_shell_copy(html, st):
     """1:1 value substitutions inside the original shell markup."""
+    # Site logo (Tina-managed): swap header/footer <img> when siteLogo is set.
+    _logo = (st.get("siteLogo") or "").strip()
+    if _logo:
+        html = html.replace('src="assets/images/logo.webp"', 'src="' + esc(_logo) + '"')
     def sub(pat, val, s, flags=0):
         if not val:
             return s
