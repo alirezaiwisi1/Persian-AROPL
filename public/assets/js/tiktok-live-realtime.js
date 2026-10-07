@@ -17,7 +17,6 @@
   if (!url || !key || !window.supabase) return; // silently inert when not enabled
 
   const section = document.getElementById('live');
-  const label = { live: 'زنده', offline: 'آفلاین', unknown: 'نامشخص' };
   let client;
   try {
     client = window.supabase.createClient(url, key, {
@@ -25,21 +24,21 @@
     });
   } catch (e) { console.warn('live-rt: client init failed', e); return; }
 
-  const applyState = (username, state, stale) => {
-    if (!section) return;
-    const card = section.querySelector('.live-card[data-username="' + CSS.escape(username) + '"]');
-    if (!card) return;
-    card.dataset.state = state;
-    card.classList.toggle('is-stale', !!stale);
-    const t = card.querySelector('.live-badge-text');
-    if (t) t.textContent = label[state] || state;
-    const a = card.querySelector('.live-action-text');
-    if (a) a.textContent = state === 'live' ? 'تماشای پخش زنده' : 'مشاهده پروفایل';
+  /* Compose the full live list and hand it to the polling engine's shared
+     presentation path (AROPL_LIVE.apply): badges + summary + reorder + alert. */
+  const liveUsernames = new Set();
+  const pushToEngine = () => {
+    if (window.AROPL_LIVE && window.AROPL_LIVE.apply) {
+      window.AROPL_LIVE.apply([...liveUsernames]);
+    }
   };
 
   const applyRow = (row) => {
     if (!row || !row.username) return;
-    applyState(row.username, row.is_live ? 'live' : 'offline', false);
+    const u = String(row.username).toLowerCase();
+    if (row.is_live) liveUsernames.add(u);
+    else liveUsernames.delete(u);
+    pushToEngine();
   };
 
   const bootstrap = async () => {
@@ -50,7 +49,9 @@
         .select('username, is_live, updated_at')
         .order('username');
       if (error) throw error;
-      (data || []).forEach(applyRow);
+      liveUsernames.clear();
+      (data || []).forEach(r => { if (r && r.username && r.is_live) liveUsernames.add(String(r.username).toLowerCase()); });
+      pushToEngine();
     } catch (e) { console.warn('live-rt: bootstrap failed', e); }
   };
 
@@ -61,7 +62,8 @@
       { event: '*', schema: 'public', table: 'tiktok_state' },
       (payload) => {
         if (payload.eventType === 'DELETE' && payload.old && payload.old.username) {
-          applyState(payload.old.username, 'unknown', true);
+          liveUsernames.delete(String(payload.old.username).toLowerCase());
+          pushToEngine();
         } else if (payload.new) {
           applyRow(payload.new);
         }

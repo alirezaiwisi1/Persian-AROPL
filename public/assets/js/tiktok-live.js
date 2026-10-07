@@ -196,6 +196,36 @@
     if (sticky && !alertEl.classList.contains('is-visible')) showAlert();
   };
 
+  /* Summary line + status rail — shared by the poll renderer and realtime hook. */
+  const paintMeta = n => {
+    if (summary) {
+      summary.textContent = n ? `${nf.format(n)} حساب در حال پخش زنده است` : 'در حال حاضر پخش زنده‌ای در جریان نیست';
+      summary.classList.toggle('has-live', n > 0);
+    }
+    if (rail) rail.dataset.state = n > 0 ? 'live' : 'idle';
+    if (railBadge) railBadge.hidden = n === 0;
+    if (railNum) railNum.textContent = nf.format(n);
+  };
+
+  /* Realtime bridge (tiktok-live-realtime.js): lets instant Supabase updates
+     reuse the SAME presentation path as polling — reorder, summary, alert —
+     instead of only flipping badge text. Optional: polling still works alone. */
+  window.AROPL_LIVE = {
+    apply(liveUsernames) {
+      const live = new Set((liveUsernames || []).map(u => String(u).toLowerCase()));
+      let n = 0;
+      byName.forEach((card, name) => setCard(card, live.has(name) ? 'live' : 'offline'));
+      byName.forEach((card, name) => { if (live.has(name)) n++; });
+      const liveList = [...live];
+      const freshSession = !hasData || liveList.some(u => !prevLive.has(u));
+      prevLive = live;
+      paintMeta(n);
+      orderCards(live);
+      syncAlert(liveList, freshSession);
+      hasData = true;
+    },
+  };
+
   /* ---------- data ------------------------------------------------------- */
   const render = (data) => {
     const live = new Set();
@@ -217,13 +247,7 @@
     const freshSession = !hasData || liveList.some(u => !prevLive.has(u));
     prevLive = live;
 
-    if (summary) {
-      summary.textContent = n ? `${nf.format(n)} حساب در حال پخش زنده است` : 'در حال حاضر پخش زنده‌ای در جریان نیست';
-      summary.classList.toggle('has-live', n > 0);
-    }
-    if (rail) rail.dataset.state = n > 0 ? 'live' : 'idle';
-    if (railBadge) railBadge.hidden = n === 0;
-    if (railNum) railNum.textContent = nf.format(n);
+    paintMeta(n);
 
     orderCards(live);
     syncAlert(liveList, freshSession);
