@@ -35,7 +35,7 @@
     const hit = roster.find(r => r.username.toLowerCase() === u.toLowerCase());
     return hit ? hit.name : u;
   };
-  const avatarOf = u => 'assets/images/tiktok/' + u + '.webp';
+  const avatarOf = u => { const hit = roster.find(r => r.username.toLowerCase() === u.toLowerCase()); return (hit && hit.avatar) ? hit.avatar : 'assets/images/tiktok/' + u + '.webp'; };
 
   let timer = 0, busy = false, hasData = false, ctrl = null;
   let prevLive = new Set();

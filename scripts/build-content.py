@@ -374,7 +374,8 @@ def write_roster(accounts):
     for i, a in enumerate(ordered):
         off = a.get("official")
         fields = ["username: %s" % json.dumps(a["username"], ensure_ascii=False),
-                  "name: %s" % json.dumps(a["displayName"], ensure_ascii=False)]
+                  "name: %s" % json.dumps(a["displayName"], ensure_ascii=False),
+                  "avatar: %s" % json.dumps((a.get("avatar") or "assets/images/tiktok/%s.webp" % a["username"]).lstrip("/"), ensure_ascii=False)]
         if off:
             fields.append("official: true")
         lines.append("  { %s }%s" % (", ".join(fields), "," if i < len(ordered) - 1 else ""))
@@ -388,6 +389,23 @@ def main():
     books = load_dir("books")
     youtube = {b["slug"]: b for b in load_dir("youtube")}
     accounts = load_dir("tiktok")
+    # Auto-normalize avatars: whatever Tina uploaded becomes assets/images/tiktok/<username>.webp
+    for a in accounts:
+        u = (a.get("username") or "").strip()
+        if not u:
+            continue
+        target = os.path.join(PUB, "assets", "images", "tiktok", u + ".webp")
+        src = (a.get("avatar") or "").lstrip("/")
+        srcp = os.path.join(PUB, src) if src else ""
+        if srcp and os.path.isfile(srcp) and not srcp.endswith(u + ".webp"):
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            try:
+                from PIL import Image
+                Image.open(srcp).convert("RGB").save(target, "WEBP", quality=88)
+                a["avatar"] = "assets/images/tiktok/%s.webp" % u
+                print("[build-content] avatar normalized:", u)
+            except Exception as e:
+                print("[build-content] avatar convert failed for", u, e)
     study_fa = load(os.path.join(CONTENT, "study", "study-fa.json"))
     study_en = load(os.path.join(CONTENT, "study", "study-en.json"))
 
