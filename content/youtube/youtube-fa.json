@@ -110,6 +110,15 @@
     {
       "url": "https://www.youtube.com/watch?v=qKwFnccZRRs",
       "autoTitle": true
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=BzXQGotdcq0",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/BzXQGotdcq0/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
