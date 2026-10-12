@@ -221,8 +221,13 @@ def study_intro(html, lang, doc=None):
     if not doc:
         return block
     d = doc.get("intro") or {}
+    def gv(key):
+        # missing key -> None (keep template default); empty string -> "" (explicitly clear)
+        v = st.get(key)
+        return None if v is None else esc(v)
+
     def sub(pat, val, s, flags=0):
-        if not val:
+        if val is None:
             return s
         return re.sub(pat, lambda m: m.group(1) + val + m.group(2), s, count=1, flags=flags)
     block = re.sub(r'(<div class="intro-media"><img src=")[^"]*(" alt=")[^"]*(")',
@@ -325,20 +330,25 @@ def apply_shell_copy(html, st):
     _logo = (st.get("siteLogo") or "").strip()
     if _logo:
         html = html.replace('src="assets/images/logo.webp"', 'src="' + esc(_logo) + '"')
+    def gv(key):
+        # missing key -> None (keep template default); empty string -> "" (explicitly clear)
+        v = st.get(key)
+        return None if v is None else esc(v)
+
     def sub(pat, val, s, flags=0):
-        if not val:
+        if val is None:
             return s
         return re.sub(pat, lambda m: m.group(1) + val + m.group(2), s, count=1, flags=flags)
 
-    html = sub(r'(<meta name="description" content=")[^"]*(">)', esc(st.get("metaDescriptionFa")), html)
-    html = sub(r'(<div class="eyebrow">)[^<]*(</div>)', esc(st.get("heroKicker")), html)
-    html = sub(r'(<h1 id="hero-title">)[^<]*(<br>)', esc(st.get("heroTitle")), html)
+    html = sub(r'(<meta name="description" content=")[^"]*(">)', gv("metaDescriptionFa"), html)
+    html = sub(r'(<div class="eyebrow">)[^<]*(</div>)', gv("heroKicker"), html)
+    html = sub(r'(<h1 id="hero-title">)[^<]*(<br>)', gv("heroTitle"), html)
     html = sub(r'(<h1 id="hero-title">[^<]*<br><span>)\([^<]*\)(</span></h1>)',
-               "(" + esc(st.get("heroTitleSuffix")) + ")", html)
+               "(" + gv("heroTitleSuffix") + ")", html)
     # hero paragraph: preserve <br> structure from JSON newlines
     hp = esc(st.get("heroParagraph") or "").replace("\n", "<br>")
     html = sub(r'(<h1 id="hero-title">.*?</h1>\s*\n\s*<p>).*?(</p>)', hp, html, re.S)
-    html = sub(r'(<a class="gold-button" href="study.html">)[^<]*(</a>)', esc(st.get("heroCtaLabel")), html)
+    html = sub(r'(<a class="gold-button" href="study.html">)[^<]*(</a>)', gv("heroCtaLabel"), html)
     html = re.sub(r'(<small>)(?:اسکرول کنید|Scroll)(</small>)',
                   lambda m: m.group(1) + esc(st.get("scrollCueText") or "اسکرول کنید") + m.group(2), html, count=1)
     # CTA section (ending)
