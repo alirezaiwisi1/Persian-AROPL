@@ -342,21 +342,9 @@ def apply_shell_copy(html, st):
 
     html = sub(r'(<meta name="description" content=")[^"]*(">)', gv("metaDescriptionFa"), html)
     html = sub(r'(<div class="eyebrow">)[^<]*(</div>)', gv("heroKicker"), html)
-    # Tina-managed hero title size / alignment (additive inline style, default = untouched)
+    # Tina-managed hero: mobile-only controls (size on title, vertical shift on whole hero block)
     _ht = []
     _size_map = {"small": "0.8", "medium": "0.9", "large": "1.15"}
-    _sv = (st.get("heroTitleSize") or "default").strip()
-    if _sv in _size_map:
-        _ht.append("--ht-scale:" + _size_map[_sv])
-    _av = (st.get("heroTitleAlign") or "default").strip()
-    if _av in ("start", "center", "left"):
-        _ht.append("text-align:" + _av)
-    try:
-        _shift = float(st.get("heroTitleShift") or 0)
-    except (TypeError, ValueError):
-        _shift = 0.0
-    if _shift:
-        _ht.append("--ht-shift:%gpx" % _shift)
     _sm = (st.get("heroTitleSizeMobile") or "default").strip()
     if _sm in _size_map:
         _ht.append("--ht-scale-m:" + _size_map[_sm])
@@ -367,7 +355,8 @@ def apply_shell_copy(html, st):
     if _shift_m:
         _ht.append("--ht-shift-m:%gpx" % _shift_m)
     if _ht:
-        html = re.sub(r'(<h1 id="hero-title")', lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
+        html = re.sub(r'(<div class="section-content hero-content")',
+                      lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
 
     html = sub(r'(<h1 id="hero-title">)[^<]*(<br>)', gv("heroTitle"), html)
     html = sub(r'(<h1 id="hero-title">[^<]*<br><span>)\([^<]*\)(</span></h1>)',

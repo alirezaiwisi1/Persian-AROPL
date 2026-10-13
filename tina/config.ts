@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  clientSchemaVersion: "9",
+  clientSchemaVersion: "10",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
@@ -36,9 +36,6 @@ export default defineConfig({
           { name: "heroKicker", label: "هیرو — متن بالای عنوان", type: "string" },
           { name: "heroTitle", label: "هیرو — عنوان", type: "string" },
           { name: "heroTitleSuffix", label: "هیرو — پسوند عنوان", type: "string" },
-          { name: "heroTitleSize", label: "هیرو — اندازهٔ متن عنوان", type: "string", options: [{ value: "default", label: "پیش‌فرض (بدون تغییر)" }, { value: "small", label: "کوچک" }, { value: "medium", label: "متوسط" }, { value: "large", label: "بزرگ" }] },
-          { name: "heroTitleAlign", label: "هیرو — جایگاه متن عنوان", type: "string", options: [{ value: "default", label: "پیش‌فرض (بدون تغییر)" }, { value: "start", label: "راست/شروع" }, { value: "center", label: "وسط" }, { value: "left", label: "چپ" }] },
-          { name: "heroTitleShift", label: "هیرو — جابه‌جایی عمودی عنوان (پیکسل، مثبت=پایین، منفی=بالا)", type: "number" },
           { name: "heroTitleSizeMobile", label: "هیرو — اندازهٔ عنوان فقط موبایل", type: "string", options: [{ value: "default", label: "پیش‌فرض (همان دسکتاپ)" }, { value: "small", label: "کوچک" }, { value: "medium", label: "متوسط" }, { value: "large", label: "بزرگ" }] },
           { name: "heroTitleShiftMobile", label: "هیرو — جابه‌جایی عمودی عنوان فقط موبایل (پیکسل)", type: "number" },
           { name: "heroParagraph", label: "هیرو — پاراگراف", type: "string", ui: { component: "textarea" } },

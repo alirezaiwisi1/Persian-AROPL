@@ -1227,12 +1227,8 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-card--featured:before,.live-status-pulse{animation:none!important}
 }
 
-/* Tina-managed hero title size & alignment (applied via inline style from build) */
-.hero h1{font-size:calc(clamp(2.4rem,7vw,5.8rem)*var(--ht-scale,1))}
-@media(max-width:1024px){.hero h1{font-size:calc(clamp(2rem,6vw,5rem)*var(--ht-scale,1))}}
-@media(max-width:560px){.hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale,1))}}
-
-.hero h1{position:relative;top:var(--ht-shift,0px)}
+/* Tina-managed hero: mobile-only title size + whole-block vertical shift */
 @media(max-width:560px){
-  .hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale-m,var(--ht-scale,1)));top:var(--ht-shift-m,var(--ht-shift,0px))}
+  .hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale-m,1))}
+  .hero-content{position:relative;top:var(--ht-shift-m,0px)}
 }
