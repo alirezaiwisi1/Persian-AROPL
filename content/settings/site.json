@@ -132,5 +132,7 @@
   ],
   "heroTitleSize": "default",
   "heroTitleAlign": "default",
-  "heroTitleShift": 0
+  "heroTitleShift": 0,
+  "heroTitleSizeMobile": "default",
+  "heroTitleShiftMobile": 0
 }

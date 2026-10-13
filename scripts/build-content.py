@@ -357,6 +357,15 @@ def apply_shell_copy(html, st):
         _shift = 0.0
     if _shift:
         _ht.append("--ht-shift:%gpx" % _shift)
+    _sm = (st.get("heroTitleSizeMobile") or "default").strip()
+    if _sm in _size_map:
+        _ht.append("--ht-scale-m:" + _size_map[_sm])
+    try:
+        _shift_m = float(st.get("heroTitleShiftMobile") or 0)
+    except (TypeError, ValueError):
+        _shift_m = 0.0
+    if _shift_m:
+        _ht.append("--ht-shift-m:%gpx" % _shift_m)
     if _ht:
         html = re.sub(r'(<h1 id="hero-title")', lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
 

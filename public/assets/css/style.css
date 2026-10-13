@@ -1233,3 +1233,6 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
 @media(max-width:560px){.hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale,1))}}
 
 .hero h1{position:relative;top:var(--ht-shift,0px)}
+@media(max-width:560px){
+  .hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale-m,var(--ht-scale,1)));top:var(--ht-shift-m,var(--ht-shift,0px))}
+}
