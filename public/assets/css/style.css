@@ -1227,13 +1227,20 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-card--featured:before,.live-status-pulse{animation:none!important}
 }
 
-/* Tina-managed hero: mobile-only title size + whole-block vertical shift */
-@media(max-width:560px){
-  .hero h1{font-size:calc(clamp(2.05rem,10vw,3.2rem)*var(--ht-scale-m,1))}
-  .hero-content{position:relative;top:var(--ht-shift-m,0px)}
-}
 
-@media(min-width:561px){
-  .hero h1{font-size:calc(clamp(2.4rem,7vw,5.8rem)*var(--ht-scale-d,1))}
-  .hero-content{position:relative;top:var(--ht-shift-d,0px)}
+/* Unified responsive hero (all viewports like mobile): one-line name, (FHIP) below.
+   Container-query sizing: the name scales exactly with available width → can never wrap or overflow,
+   so Tina size presets can only make it bigger/smaller without breaking layout. */
+.hero-content{container-type:inline-size;position:relative;top:var(--ht-shift-d,0px)}
+.hero h1{
+  white-space:nowrap;
+  font-size:calc(12cqw*var(--ht-scale-d,1));  /* ~fits the full name in one line */
+  line-height:1.15;letter-spacing:-.01em;
+}
+.hero h1 br{display:none}
+.hero h1 span{display:block;font-size:.5em;letter-spacing:.14em;margin-top:.15em}
+
+@media(max-width:560px){
+  .hero h1{font-size:calc(12cqw*var(--ht-scale-m,1))}
+  .hero-content{top:var(--ht-shift-m,0px)}
 }

@@ -102,3 +102,26 @@
       }).catch(() => {});
   });
 })();
+
+
+/* --- Hero title fit: keep the name on exactly one line at any viewport/Tina text (resizable-safe) --- */
+(function(){
+  var h1=document.getElementById('hero-title'); if(!h1) return;
+  function fit(){
+    var box=h1.closest('.hero-content')||h1.parentElement;
+    var name=h1.childNodes[0]; if(!name||name.nodeType!==3) {name=h1.firstChild;}
+    var cs=getComputedStyle(h1);
+    h1.style.fontSize='';
+    var base=parseFloat(cs.fontSize);
+    // measure at current font size
+    var range=document.createRange(); range.selectNodeContents(name);
+    var w=range.getBoundingClientRect().width;
+    var avail=box.getBoundingClientRect().width*0.96;
+    if(w>0){ h1.style.fontSize=(base*avail/w)+'px'; }
+  }
+  window.addEventListener('load',fit);
+  window.addEventListener('resize',fit);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+  document.addEventListener('DOMContentLoaded',fit);
+  fit(); window.__fitRan=true;
+})();

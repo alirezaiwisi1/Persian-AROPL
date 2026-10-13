@@ -342,27 +342,29 @@ def apply_shell_copy(html, st):
 
     html = sub(r'(<meta name="description" content=")[^"]*(">)', gv("metaDescriptionFa"), html)
     html = sub(r'(<div class="eyebrow">)[^<]*(</div>)', gv("heroKicker"), html)
-    # Tina-managed hero: mobile-only controls (size on title, vertical shift on whole hero block)
+    # Tina-managed hero: unified responsive controls (scale factor + vertical shift, all viewports)
     _ht = []
     _size_map = {"small": "0.8", "medium": "0.9", "large": "1.15"}
-    _sm = (st.get("heroTitleSizeMobile") or "default").strip()
-    if _sm in _size_map:
-        _ht.append("--ht-scale-m:" + _size_map[_sm])
+    _sv = (st.get("heroTitleSizeMobile") or "default").strip()
+    if _sv in _size_map:
+        _ht.append("--ht-scale-m:" + _size_map[_sv])
+    else:
+        _sd = (st.get("heroTitleSizeDesktop") or "default").strip()
+        if _sd in _size_map:
+            _ht.append("--ht-scale-d:" + _size_map[_sd])
     try:
-        _shift_m = float(st.get("heroTitleShiftMobile") or 0)
+        _shift = float(st.get("heroTitleShiftMobile") or 0)
     except (TypeError, ValueError):
-        _shift_m = 0.0
-    if _shift_m:
-        _ht.append("--ht-shift-m:%gpx" % _shift_m)
-    _sd = (st.get("heroTitleSizeDesktop") or "default").strip()
-    if _sd in _size_map:
-        _ht.append("--ht-scale-d:" + _size_map[_sd])
-    try:
-        _shift_d = float(st.get("heroTitleShiftDesktop") or 0)
-    except (TypeError, ValueError):
-        _shift_d = 0.0
-    if _shift_d:
-        _ht.append("--ht-shift-d:%gpx" % _shift_d)
+        _shift = 0.0
+    if _shift:
+        _ht.append("--ht-shift-m:%gpx" % _shift)
+    else:
+        try:
+            _shift_d = float(st.get("heroTitleShiftDesktop") or 0)
+        except (TypeError, ValueError):
+            _shift_d = 0.0
+        if _shift_d:
+            _ht.append("--ht-shift-d:%gpx" % _shift_d)
     if _ht:
         html = re.sub(r'(<div class="section-content hero-content")',
                       lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
