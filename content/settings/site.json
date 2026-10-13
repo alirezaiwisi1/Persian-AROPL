@@ -129,5 +129,7 @@
       "label": "وب‌سایت رسمی ↗",
       "url": "https://theahmadireligion.org/"
     }
-  ]
+  ],
+  "heroTitleSize": "default",
+  "heroTitleAlign": "default"
 }
