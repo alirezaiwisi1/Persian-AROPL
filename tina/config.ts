@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  clientSchemaVersion: "10",
+  clientSchemaVersion: "11",
   branch: process.env.GITHUB_BRANCH || process.env.HEAD || "main",
 
   // Credentials come from the environment only — never hard-coded.
@@ -38,6 +38,8 @@ export default defineConfig({
           { name: "heroTitleSuffix", label: "هیرو — پسوند عنوان", type: "string" },
           { name: "heroTitleSizeMobile", label: "هیرو — اندازهٔ عنوان فقط موبایل", type: "string", options: [{ value: "default", label: "پیش‌فرض (همان دسکتاپ)" }, { value: "small", label: "کوچک" }, { value: "medium", label: "متوسط" }, { value: "large", label: "بزرگ" }] },
           { name: "heroTitleShiftMobile", label: "هیرو — جابه‌جایی عمودی عنوان فقط موبایل (پیکسل)", type: "number" },
+          { name: "heroTitleSizeDesktop", label: "هیرو — اندازهٔ عنوان (دسکتاپ/تبلت)", type: "string", options: [{ value: "default", label: "پیش‌فرض (بدون تغییر)" }, { value: "small", label: "کوچک" }, { value: "medium", label: "متوسط" }, { value: "large", label: "بزرگ" }] },
+          { name: "heroTitleShiftDesktop", label: "هیرو — جابه‌جایی عمودی بلوک هیرو (دسکتاپ/تبلت، پیکسل)", type: "number" },
           { name: "heroParagraph", label: "هیرو — پاراگراف", type: "string", ui: { component: "textarea" } },
           { name: "heroCtaLabel", label: "هیرو — دکمه", type: "string" },
           { name: "aboutKicker", label: "درباره — کیکر", type: "string" },

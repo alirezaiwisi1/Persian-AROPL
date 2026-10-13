@@ -354,6 +354,15 @@ def apply_shell_copy(html, st):
         _shift_m = 0.0
     if _shift_m:
         _ht.append("--ht-shift-m:%gpx" % _shift_m)
+    _sd = (st.get("heroTitleSizeDesktop") or "default").strip()
+    if _sd in _size_map:
+        _ht.append("--ht-scale-d:" + _size_map[_sd])
+    try:
+        _shift_d = float(st.get("heroTitleShiftDesktop") or 0)
+    except (TypeError, ValueError):
+        _shift_d = 0.0
+    if _shift_d:
+        _ht.append("--ht-shift-d:%gpx" % _shift_d)
     if _ht:
         html = re.sub(r'(<div class="section-content hero-content")',
                       lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
