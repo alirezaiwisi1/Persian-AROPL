@@ -131,5 +131,6 @@
     }
   ],
   "heroTitleSize": "default",
-  "heroTitleAlign": "default"
+  "heroTitleAlign": "default",
+  "heroTitleShift": 0
 }

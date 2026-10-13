@@ -351,6 +351,12 @@ def apply_shell_copy(html, st):
     _av = (st.get("heroTitleAlign") or "default").strip()
     if _av in ("start", "center", "left"):
         _ht.append("text-align:" + _av)
+    try:
+        _shift = float(st.get("heroTitleShift") or 0)
+    except (TypeError, ValueError):
+        _shift = 0.0
+    if _shift:
+        _ht.append("--ht-shift:%gpx" % _shift)
     if _ht:
         html = re.sub(r'(<h1 id="hero-title")', lambda m: m.group(1) + ' style="' + ";".join(_ht) + '"', html, count=1)
 
