@@ -1226,10 +1226,3 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .live-card[data-state="live"] .live-badge:after,
   .live-card--featured:before,.live-status-pulse{animation:none!important}
 }
-
-/* hero title: keep the name on one line on mobile; (FHIP) sized below it */
-@media(max-width:560px){
-  .hero h1{white-space:nowrap;font-size:clamp(1.05rem,4.8vw,2.05rem);line-height:1.2;letter-spacing:-.01em}
-  .hero h1 br{display:none}
-  .hero h1 span{display:block;font-size:.62em;letter-spacing:.12em;margin-top:.18em}
-}
