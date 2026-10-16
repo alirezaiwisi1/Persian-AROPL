@@ -394,7 +394,7 @@ def apply_shell_copy(html, st):
                            lambda m: m.group(1) + esc(st.get(prefix + "Kicker") or "") + m.group(2), inner, count=1)
         new_inner = re.sub(r'(<h2[^>]*>)[^<]*(</h2>)',
                            lambda m: m.group(1) + esc(st.get(prefix + "Title") or "") + m.group(2), new_inner, count=1)
-        new_inner = re.sub(r'(<h2>[^<]*</h2>\s*<p>).*?(</p>)',
+        new_inner = re.sub(r'(<h2[^>]*>[^<]*</h2>\s*<p>).*?(</p>)',
                            lambda m: m.group(1) + esc(st.get(prefix + "Paragraph") or "") + m.group(2), new_inner, count=1)
         html = html.replace(inner, new_inner)
     return html
