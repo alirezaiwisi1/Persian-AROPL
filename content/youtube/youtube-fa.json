@@ -128,6 +128,15 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "ویدیوی منتخب فارسی",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=TkBbiejQjZg",
+      "autoTitle": true,
+      "thumb": "https://i.ytimg.com/vi/TkBbiejQjZg/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ویدیوی منتخب فارسی",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
