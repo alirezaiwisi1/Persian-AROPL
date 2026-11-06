@@ -55,10 +55,10 @@ function jsonResp(body: unknown, status = 200) {
   });
 }
 
-async function fetchFeed(channelId: string): Promise<{ id: string; title: string }[]> {
+async function fetchFeed(channelId: string): Promise<{ videos: { id: string; title: string }[]; unknown: string[] }> {
   const res = await fetch(
     `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-    { headers: { "user-agent": "aropl-yt-watcher/1.0" } },
+    { headers: { "user-agent": "aropl-yt-watcher/1.0" }, signal: AbortSignal.timeout(10000) },
   );
   if (!res.ok) throw new Error(`feed ${channelId} HTTP ${res.status}`);
   const xml = await res.text();
@@ -68,26 +68,32 @@ async function fetchFeed(channelId: string): Promise<{ id: string; title: string
     const title =
       e.match(/<title>([\s\S]*?)<\/title>/)?.[1]
         ?.replace(/<!\[CDATA\[|\]\]>/g, "")
+        .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
         .trim() ?? "";
     return { id, title };
   }).filter((v) => /^[A-Za-z0-9_-]{6,}$/.test(v.id));
   // Only regular "Videos"-tab uploads — skip Shorts (and anything that redirects there).
-  const isRegular: boolean[] = await Promise.all(vids.map((v) => isRegularVideo(v.id)));
-  return vids.filter((_, i) => isRegular[i]);
+  const checks = await Promise.all(vids.map((v) => isRegularVideo(v.id)));
+  const unknown = vids.filter((_, i) => checks[i] === "unknown").map((v) => v.id);
+  if (unknown.length) console.error(`shorts check failed for ${channelId}:`, unknown.join(", "));
+  return { videos: vids.filter((_, i) => checks[i] === "regular"), unknown };
 }
 
-/** true = regular upload (Videos tab); false = Short or unknown/removed. */
-async function isRegularVideo(videoId: string): Promise<boolean> {
+/** "regular" = Videos-tab upload, "short" = Short, "unknown" = the check failed. */
+async function isRegularVideo(videoId: string): Promise<"regular" | "short" | "unknown"> {
   try {
     const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
       method: "HEAD",
       redirect: "follow",
       headers: { "user-agent": "aropl-yt-watcher/1.0" },
+      signal: AbortSignal.timeout(10000),
     });
+    if (!res.ok) return "unknown";
     // A Short resolves to a /shorts/ URL; a regular video redirects to /watch?v=…
-    return !new URL(res.url).pathname.startsWith("/shorts/");
+    return new URL(res.url).pathname.startsWith("/shorts/") ? "short" : "regular";
   } catch {
-    return false; // unknown → do not add (safe default)
+    return "unknown"; // check failed: skip, but say so (see fetchFeed)
   }
 }
 
@@ -100,7 +106,8 @@ async function getJsonFile(file: string): Promise<{ sha: string; data: any }> {
       authorization: `Bearer ${Deno.env.get("GITHUB_TOKEN")}`,
       accept: "application/vnd.github+json",
       "user-agent": "aropl-yt-watcher",
-    } },
+    },
+    signal: AbortSignal.timeout(15000) },
   );
   if (!res.ok) throw new Error(`github get ${file}: ${res.status}`);
   const j = await res.json();
@@ -110,14 +117,15 @@ async function getJsonFile(file: string): Promise<{ sha: string; data: any }> {
   return { sha: j.sha, data: JSON.parse(decoded) };
 }
 
-function toEntry(videoId: string, ch: (typeof CHANNELS)[number]) {
+function toEntry(videoId: string, ch: (typeof CHANNELS)[number], title: string) {
   return {
     url: `https://www.youtube.com/watch?v=${videoId}`,
-    autoTitle: true,
+    // Real RSS title, so the browser never needs an oEmbed fetch for this card.
+    autoTitle: false,
     thumb: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
     thumbAlt: ch.thumbAlt,
     channelLabel: ch.channelLabel,
-    title: ch.title,
+    title: title || ch.title,
     ctaLabel: ch.ctaLabel,
   };
 }
@@ -147,6 +155,7 @@ async function commitJson(
           String.fromCharCode(...new TextEncoder().encode(JSON.stringify(data, null, 2) + "\n")),
         ),
       }),
+      signal: AbortSignal.timeout(15000),
     },
   );
   if (!res.ok) {
@@ -170,8 +179,9 @@ Deno.serve(async (req) => {
     for (const ch of CHANNELS) {
       const out: any = { checked: 0, added: 0, committed: false };
       try {
-        const feed = await fetchFeed(ch.channelId);
+        const { videos: feed, unknown } = await fetchFeed(ch.channelId);
         out.checked = feed.length;
+        out.shortsCheckFailed = unknown;
 
         // Dedupe against DB (survives restarts, independent of git history).
         const ids = feed.map((v) => v.id);
@@ -200,7 +210,7 @@ Deno.serve(async (req) => {
         const toAdd = fresh.filter((v) => !existing.has(v.id));
         out.skippedInJson = fresh.length - toAdd.length;
         if (toAdd.length > 0) {
-          for (const v of toAdd) data.videos.push(toEntry(v.id, ch));
+          for (const v of toAdd) data.videos.push(toEntry(v.id, ch, v.title));
           out.committed = await commitJson(
             ch.file,
             sha,
@@ -234,6 +244,12 @@ Deno.serve(async (req) => {
         results[ch.lang] = { error: String(e) };
         await supabase.from("yt_runs").insert({ lang: ch.lang, status: "error", detail: String(e) });
       }
+    }
+    // Keep the run log trimmed (the SQL function existed but nothing called it).
+    try {
+      await supabase.rpc("trim_yt_runs");
+    } catch (e) {
+      console.error("trim_yt_runs failed", e);
     }
     return jsonResp({ ok: true, results });
   } catch (e) {

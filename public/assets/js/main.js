@@ -86,7 +86,7 @@
       const i = Math.min(nv, Math.max(1, Math.round(p * (n - 1))));
       count.textContent = `${nf.format(i)} / ${nf.format(nv)}`;
       thumb.style.setProperty('--p', p.toFixed(3));
-      prev.disabled = p < .02; next.disabled = p > .98;
+      prev.disabled = p < .02 || n < 2; next.disabled = p > .98 || n < 2;
       if (p > .02) block.classList.add('moved');
     };
     sc.addEventListener('scroll', update, { passive: true }); addEventListener('resize', update); update();

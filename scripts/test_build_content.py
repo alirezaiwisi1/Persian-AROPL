@@ -15,6 +15,8 @@ _spec = importlib.util.spec_from_file_location(
 _mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
 allow_title_html = _mod.allow_title_html
+section_id = _mod.section_id
+must_search = _mod.must_search
 
 # Real titles keep their <br> and <em>.
 assert allow_title_html("هدف<br><em>حکیم</em>") == "هدف<br><em>حکیم</em>"
@@ -29,5 +31,21 @@ assert allow_title_html('<a href="https://example.com">x</a>') == (
 
 # A typed-out "&lt;br&gt;" must not smuggle a real <br> through.
 assert "<br>" not in allow_title_html("&lt;br&gt;")
+
+# Section ids: a real id wins; a missing one falls back to the canonical id,
+# so the article and the TOC always agree on the anchor.
+assert section_id({"id": "custom"}, "fa", 1) == "custom"
+assert section_id({}, "fa", 1) == "fa-platform"
+assert section_id({}, "en", 1) == "en-platform"
+
+# must_search returns the match, and names the missing marker instead of
+# crashing with a bare AttributeError.
+assert must_search(r"(ab)", "xab", "demo").group(1) == "ab"
+try:
+    must_search(r"(zz)", "xab", "demo-marker")
+except SystemExit as e:
+    assert "demo-marker" in str(e)
+else:
+    raise AssertionError("must_search did not raise on a missing marker")
 
 print("test_build_content: ok")

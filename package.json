@@ -2,7 +2,6 @@
   "name": "persian-aropl",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "dev": "tinacms dev --skip-cloud-checks -c \"npx wrangler dev\"",
     "build": "tinacms build --skip-cloud-checks --local && python3 scripts/build-content.py",

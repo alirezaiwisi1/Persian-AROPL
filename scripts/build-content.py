@@ -54,6 +54,25 @@ def allow_title_html(s):
     return text
 
 
+# Canonical study section ids per language (template TOC anchors).
+# Tina may drop a section 'id' on save; the article and the TOC both use
+# this one fallback, so their anchors can never disagree.
+CANON_IDS = ["prophecies", "platform", "west", "king", "banners", "age", "soul", "duties"]
+
+
+def section_id(sec, lang, i):
+    return sec.get("id") or f"{lang}-{CANON_IDS[i] if i < len(CANON_IDS) else i + 1}"
+
+
+def must_search(pat, s, what, flags=0):
+    """re.search that names the missing template marker instead of dying
+    with a bare AttributeError."""
+    m = re.search(pat, s, flags)
+    if not m:
+        raise SystemExit(f"[build-content] template marker missing: {what}")
+    return m
+
+
 # --- card templates: VERBATIM markup from the original index.html; only data differs ---
 BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
           <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
@@ -212,10 +231,8 @@ def render_livecards(accounts):
 
 def render_study_article(doc, lang):
     parts = []
-    # Canonical section ids per language (template TOC anchors); Tina may drop 'id' on save.
-    CANON_IDS = ["prophecies", "platform", "west", "king", "banners", "age", "soul", "duties"]
     for i, sec in enumerate(doc.get("sections", [])):
-        sid = sec.get("id") or f"{lang}-{CANON_IDS[i] if i < len(CANON_IDS) else i + 1}"
+        sid = section_id(sec, lang, i)
         blocks = []
         for b in sec.get("blocks", []):
             btype = b.get("_template") or b.get("type") or "paragraph"
@@ -228,17 +245,12 @@ def render_study_article(doc, lang):
 
 
 def study_intro(html, lang, doc=None):
-    art = re.search(r'<article class="article-wrap study-version" id="study-' + lang + r'"[^>]*>(.*?)</article>', html, re.S)
+    art = must_search(r'<article class="article-wrap study-version" id="study-' + lang + r'"[^>]*>(.*?)</article>', html, f"study-{lang} article", re.S)
     intro = re.search(r'[ \t]*<div class="article-intro">.*?</div>\s*</div>', art.group(1), re.S)
     block = intro.group(0) if intro else ""
     if not doc:
         return block
     d = doc.get("intro") or {}
-    def gv(key):
-        # missing key -> None (keep template default); empty string -> "" (explicitly clear)
-        v = st.get(key)
-        return None if v is None else esc(v)
-
     def sub(pat, val, s, flags=0):
         if val is None:
             return s
@@ -316,9 +328,9 @@ def render_source_line(quote):
 
 def render_toc(html, fa_doc, en_doc):
     """Rebuild the study TOC labels/anchors from Tina section titles (FA visible + data-fa, EN data-en)."""
-    def grab(doc):
-        return [(esc(s.get("id") or ""), esc(s.get("num") or ""), esc(s.get("title") or "")) for s in doc.get("sections", [])]
-    fa, en = grab(fa_doc), grab(en_doc)
+    def grab(doc, lang):
+        return [(esc(section_id(s, lang, i)), esc(s.get("num") or ""), esc(s.get("title") or "")) for i, s in enumerate(doc.get("sections", []))]
+    fa, en = grab(fa_doc, "fa"), grab(en_doc, "en")
     n = min(len(fa), len(en), 8)
     if n == 0:
         return html
@@ -451,7 +463,7 @@ def main():
             os.makedirs(os.path.dirname(target), exist_ok=True)
             try:
                 from PIL import Image
-                Image.open(srcp).convert("RGB").save(target, "WEBP", quality=88)
+                Image.open(srcp).convert("RGBA").save(target, "WEBP", quality=88)
                 a["avatar"] = "assets/images/tiktok/%s.webp" % u
                 print("[build-content] avatar normalized:", u)
             except Exception as e:
@@ -474,18 +486,20 @@ def main():
     # ================= index.html =================
     idx = open(os.path.join(TPL, "index.html"), encoding="utf-8").read()
 
-    m = re.search(r'(<div class="books-stack">\n).*?(\n      </div>\n    </section>)', idx, re.S)
+    m = must_search(r'(<div class="books-stack">\n).*?(\n      </div>\n    </section>)', idx, "books-stack", re.S)
     idx = idx[:m.start(1) + len(m.group(1))] + render_books(books) + idx[m.start(2):]
 
     for label, slug in (("youtube-fa-title", "youtube-fa"), ("youtube-en-title", "youtube-en")):
-        blk = re.search(r'(aria-labelledby="' + label + r'">\s*\n\s*<div class="youtube-block-heading">.*?<div class="video-scroller youtube-scroller">\s*\n).*?(\n        </div>\n      </div>\n)(?=\s*\n?\s*(?:<div class="youtube-block|</section>))', idx, re.S)
-        data = youtube[slug]
+        blk = must_search(r'(aria-labelledby="' + label + r'">\s*\n\s*<div class="youtube-block-heading">.*?<div class="video-scroller youtube-scroller">\s*\n).*?(\n        </div>\n      </div>\n)(?=\s*\n?\s*(?:<div class="youtube-block|</section>))', idx, f"youtube block {label}", re.S)
+        data = youtube.get(slug)
+        if data is None:
+            raise SystemExit(f"[build-content] missing content file: content/youtube/{slug}.json")
         lang = "en" if slug.endswith("-en") else "fa"
         vids = apply_video_defaults([dict(v) for v in data.get("videos", [])], lang)
         inner = render_channel(data) + BR + render_videos(vids)
         idx = idx[:blk.start(1) + len(blk.group(1))] + inner + idx[blk.start(2):]
 
-    m3 = re.search(r'(<div class="live-grid">\s*\n).*?(\n      </div>\n\n      <p class="live-note")', idx, re.S)
+    m3 = must_search(r'(<div class="live-grid">\s*\n).*?(\n      </div>\n\n      <p class="live-note")', idx, "live-grid", re.S)
     idx = idx[:m3.start(1) + len(m3.group(1))] + render_livecards(accounts) + idx[m3.start(2):]
 
     idx = apply_shell_copy(idx, st)
@@ -519,9 +533,9 @@ def main():
 
     # ================= study.html =================
     std = open(os.path.join(TPL, "study.html"), encoding="utf-8").read()
-    fa = re.search(r'(<article class="article-wrap study-version" id="study-fa"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
+    fa = must_search(r'(<article class="article-wrap study-version" id="study-fa"[^>]*>\s*\n)(.*?)(\n    </article>)', std, "study-fa article", re.S)
     std = std[:fa.start(2)] + study_intro(std, "fa", study_fa) + BR + BR + render_study_article(study_fa, "fa") + std[fa.end(2):]
-    en = re.search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>\s*\n)(.*?)(\n    </article>)', std, re.S)
+    en = must_search(r'(<article class="article-wrap study-version" id="study-en"[^>]*>\s*\n)(.*?)(\n    </article>)', std, "study-en article", re.S)
     std = std[:en.start(2)] + study_intro(std, "en", study_en) + BR + BR + render_study_article(study_en, "en") + std[en.end(2):]
     std = render_toc(std, study_fa, study_en)
     std = apply_shell_copy(std, st)

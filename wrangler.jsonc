@@ -7,8 +7,5 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
-  },
-  "vars": {
-    "TIKTOK_API_BASE": "https://tiktok-live-monitor-hcc7.onrender.com"
   }
 }

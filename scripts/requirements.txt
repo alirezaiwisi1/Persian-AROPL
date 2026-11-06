@@ -1,0 +1,3 @@
+# Python deps for scripts/build-content.py (avatar conversion to WebP).
+# Install once: pip install -r scripts/requirements.txt
+Pillow>=10

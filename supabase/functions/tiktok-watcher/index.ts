@@ -32,6 +32,14 @@ function jsonResp(body: unknown, status = 200) {
   });
 }
 
+/** A timestamp the database accepts, or null. One bad value must not
+    kill the whole upsert, so invalid rows are dropped, not passed through. */
+function validTs(v: unknown): string | null {
+  if (v == null || v === "") return null;
+  const d = new Date(String(v));
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
 type Account = {
   username: string;
   isLive: boolean;
@@ -60,12 +68,17 @@ Deno.serve(async (req) => {
     const rows: any[] = [];
     for (const group of ["live", "offline"] as const) {
       for (const a of (data[group] ?? []) as Account[]) {
+        const username = String(a.username || "").toLowerCase();
+        if (!username) {
+          console.warn("tiktok-watcher: skipping account without username", JSON.stringify(a));
+          continue;
+        }
         rows.push({
-          username: String(a.username || "").toLowerCase(),
+          username,
           is_live: group === "live" ? true : !!a.isLive,
           connected: !!a.connected,
-          last_live_at: a.lastLiveAt,
-          last_offline_at: a.lastOfflineAt,
+          last_live_at: validTs(a.lastLiveAt),
+          last_offline_at: validTs(a.lastOfflineAt),
           updated_at: new Date().toISOString(),
         });
       }
@@ -77,7 +90,7 @@ Deno.serve(async (req) => {
       if (u && !seen.has(u)) {
         rows.push({
           username: u, is_live: false, connected: false,
-          last_live_at: a.lastLiveAt ?? null, last_offline_at: a.lastOfflineAt ?? null,
+          last_live_at: validTs(a.lastLiveAt), last_offline_at: validTs(a.lastOfflineAt),
           updated_at: new Date().toISOString(),
         });
       }

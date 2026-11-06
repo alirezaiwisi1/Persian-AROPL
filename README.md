@@ -40,6 +40,8 @@ pnpm dev            # Tina dev server + wrangler dev
 
 `pnpm build` → `tinacms build --skip-cloud-checks --local` + `scripts/build-content.py`.
 
+The build step also needs Pillow (avatar conversion to WebP): `pip install -r scripts/requirements.txt`.
+
 ## Editing content
 
 Open `/admin` (mobile or desktop). Five collections, no HTML/CSS/JS/JSON editing needed:
@@ -59,7 +61,6 @@ Copy `.env.example` → `.env` locally, and set these in Cloudflare → Worker �
 | `NEXT_PUBLIC_TINA_CLIENT_ID` | build time | TinaCloud client ID |
 | `TINA_TOKEN` | build time | TinaCloud content (read) token |
 | `GITHUB_BRANCH` | build time | branch TinaCMS commits to (defaults to `main`) |
-| `TIKTOK_API_BASE` | runtime var | existing TikTok LIVE backend base URL |
 | `CF_API_TOKEN` | CI only | Cloudflare deploy token (GitHub Actions, optional) |
 | `CF_ACCOUNT_ID` | CI only | Cloudflare account id (optional) |
 
@@ -73,8 +74,7 @@ Workers Builds (git-based) is the recommended path:
 1. Cloudflare → Workers & Pages → Create → Workers → Import a repository → `Persian-AROPL`.
 2. Build command: `npm run build:cloud` · Deploy command: `npx wrangler deploy`.
 3. Worker → Settings → Build → Variables and Secrets: `NEXT_PUBLIC_TINA_CLIENT_ID`, `TINA_TOKEN`, `GITHUB_BRANCH`.
-4. Worker → Settings → Variables: `TIKTOK_API_BASE` (or keep the value in `wrangler.jsonc` vars).
-5. In TinaCloud (`app.tina.io`) set the project **Site URL** to the worker URL, e.g. `https://persian-aropl.<account>.workers.dev`,
+4. In TinaCloud (`app.tina.io`) set the project **Site URL** to the worker URL, e.g. `https://persian-aropl.<account>.workers.dev`,
    so `/admin` login works against the correct origin.
 
 Or from the CLI: `npx wrangler secret put TINA_TOKEN` etc., then `npm run deploy`.

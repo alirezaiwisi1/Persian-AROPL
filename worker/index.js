@@ -1,11 +1,9 @@
 /**
  * Persian-AROPL — Cloudflare Worker entrypoint.
  *
- * Serves the static site (public/) as Worker assets and exposes a tiny
- * /api/tiktok-status proxy so the front-end can read LIVE status without
- * depending on the backend's CORS setup. The LIVE detection itself stays
- * 100% in the existing backend (TikTok LIVE monitor) — this Worker only
- * forwards the response untouched.
+ * Serves the static site (public/) as Worker assets and exposes a /health
+ * check. The TikTok LIVE detection lives 100% in the existing backend
+ * (TikTok LIVE monitor), which the front-end calls directly.
  *
  * Secrets (set with `wrangler secret put`):
  *   TINA_TOKEN, NEXT_PUBLIC_TINA_CLIENT_ID are build-time only and are NOT
@@ -19,28 +17,6 @@ export default {
     // Health check
     if (url.pathname === "/health") {
       return new Response("ok", { status: 200 });
-    }
-
-    // Optional same-origin proxy for the TikTok LIVE status endpoint.
-    // The site keeps calling the backend directly via assets/js/config.js;
-    // this proxy is a fallback for strict CORS environments.
-    if (url.pathname === "/api/tiktok-status") {
-      try {
-        const base = (env.TIKTOK_API_BASE || "https://tiktok-live-monitor-hcc7.onrender.com").replace(/\/+$/, "");
-        const upstream = await fetch(base + "/api/status", {
-          headers: { "accept": "application/json" },
-          signal: AbortSignal.timeout(8000),
-          cf: { cacheTtl: 15, cacheEverything: false },
-        });
-        const resp = new Response(upstream.body, upstream);
-        resp.headers.set("access-control-allow-origin", url.origin);
-        resp.headers.set("content-type", "application/json");
-        return resp;
-      } catch {
-        return new Response(JSON.stringify({ error: "upstream unavailable" }), {
-          status: 502, headers: { "content-type": "application/json" },
-        });
-      }
     }
 
     // Static assets (public/ folder is bound in wrangler.jsonc).
