@@ -25,21 +25,34 @@ export default {
     // The site keeps calling the backend directly via assets/js/config.js;
     // this proxy is a fallback for strict CORS environments.
     if (url.pathname === "/api/tiktok-status") {
-      const base = (env.TIKTOK_API_BASE || "https://tiktok-live-monitor-hcc7.onrender.com").replace(/\/+$/, "");
-      const upstream = await fetch(base + "/api/status", {
-        headers: { "accept": "application/json" },
-        cf: { cacheTtl: 15, cacheEverything: false },
-      });
-      const resp = new Response(upstream.body, upstream);
-      resp.headers.set("access-control-allow-origin", url.origin);
-      resp.headers.set("content-type", "application/json");
-      return resp;
+      try {
+        const base = (env.TIKTOK_API_BASE || "https://tiktok-live-monitor-hcc7.onrender.com").replace(/\/+$/, "");
+        const upstream = await fetch(base + "/api/status", {
+          headers: { "accept": "application/json" },
+          signal: AbortSignal.timeout(8000),
+          cf: { cacheTtl: 15, cacheEverything: false },
+        });
+        const resp = new Response(upstream.body, upstream);
+        resp.headers.set("access-control-allow-origin", url.origin);
+        resp.headers.set("content-type", "application/json");
+        return resp;
+      } catch {
+        return new Response(JSON.stringify({ error: "upstream unavailable" }), {
+          status: 502, headers: { "content-type": "application/json" },
+        });
+      }
     }
 
     // Static assets (public/ folder is bound in wrangler.jsonc).
     // Ask the assets binding for the exact path first; only fall back to
     // directory-index handling for extensionless document URLs.
-    const path = decodeURIComponent(url.pathname);
+    // A malformed path (bad %-escape) is a 404, not a crash.
+    let path;
+    try {
+      path = decodeURIComponent(url.pathname);
+    } catch {
+      return new Response("not found", { status: 404 });
+    }
     if (path !== "/" && /\.[a-zA-Z0-9]+$/.test(path)) {
       const asset = await env.ASSETS.fetch(new Request(new URL(path, url.origin), request));
       if (asset.status !== 404) return asset;

@@ -41,6 +41,19 @@ def esc(s):
             .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 
+def allow_title_html(s):
+    """Book titles only: escape everything, then restore <br> and <em>.
+
+    esc() runs first, so anything else (script, img onerror, ...) stays
+    escaped. A literal "&lt;br&gt;" typed in Tina becomes "&amp;lt;br&amp;gt;"
+    and is not restored, so there is no way to smuggle a tag through.
+    """
+    text = esc(s)
+    for tag in ("<br>", "<br/>", "<br />", "<em>", "</em>"):
+        text = text.replace(esc(tag), tag)
+    return text
+
+
 # --- card templates: VERBATIM markup from the original index.html; only data differs ---
 BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
           <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
@@ -123,7 +136,7 @@ def render_books(books):
             ratio=b.get("coverRatio", 0.65), coverWidth=b.get("coverWidth", 826), ry=b.get("restRotateY", -24), rx=b.get("restRotateX", 4),
             cover=esc(b.get("coverImage", "")), coverAlt=esc(b.get("coverAlt", "")),
             spineLabel=esc(b.get("spineLabel", "")),
-            titleFa=b.get("titleFa", ""),  # may contain <br><em> inline (original markup)
+            titleFa=allow_title_html(b.get("titleFa", "")),  # only <br> and <em> survive; the rest is escaped
             descriptionFa=esc(b.get("descriptionFa", "")),
             pdfUrl=esc(b.get("pdfUrl", "")), audioUrl=esc(b.get("audioUrl", "")),
             officialUrl=esc(b.get("officialUrl", "")), blank="            "))

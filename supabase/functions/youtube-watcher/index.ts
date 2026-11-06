@@ -207,15 +207,20 @@ Deno.serve(async (req) => {
             data,
             `automation: add ${toAdd.length} new ${ch.lang.toUpperCase()} video(s) (${toAdd.map((v) => v.id).join(", ")})`,
           );
-          out.added = toAdd.length;
+          if (out.committed) out.added = toAdd.length;
         }
 
-        for (const v of toAdd) {
-          await supabase.from("yt_seen").upsert({
-            video_id: v.id,
-            lang: ch.lang,
-            title: v.title,
-          });
+        // Only mark videos seen after a successful commit. A failed commit
+        // leaves them unseen, so the next run retries them instead of
+        // losing them forever.
+        if (out.committed) {
+          for (const v of toAdd) {
+            await supabase.from("yt_seen").upsert({
+              video_id: v.id,
+              lang: ch.lang,
+              title: v.title,
+            });
+          }
         }
         await supabase.from("yt_runs").insert({
           lang: ch.lang,
