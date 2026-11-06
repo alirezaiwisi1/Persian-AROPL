@@ -155,6 +155,15 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "ویدیوی منتخب فارسی",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=w2vjLmszH6g",
+      "autoTitle": false,
+      "thumb": "https://i.ytimg.com/vi/w2vjLmszH6g/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "ما کشتی هستیم: جماعتی که از طوفان نجات می‌یابد",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
