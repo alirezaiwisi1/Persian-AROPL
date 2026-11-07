@@ -1,0 +1,23 @@
+name: build
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - run: python3 scripts/test_build_content.py
+      - run: python3 scripts/build-content.py
+      - run: node --check worker/index.js
+      - run: node --check public/assets/js/main.js
+      # The generated HTML/JS must match the committed copies; if the build
+      # output drifts, the commit forgot to regenerate them.
+      - name: generated files in sync
+        run: git diff --exit-code -- public/index.html public/study.html public/assets/js/config.js public/assets/js/tiktok-accounts.js
