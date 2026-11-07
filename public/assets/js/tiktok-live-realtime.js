@@ -27,6 +27,16 @@
   /* Compose the full live list and hand it to the polling engine's shared
      presentation path (AROPL_LIVE.apply): badges + summary + reorder + alert. */
   const liveUsernames = new Set();
+
+  // The watcher rewrites updated_at every minute, so a row older than
+  // 5 minutes means it has missed 5 runs: do not trust it. The 30-second
+  // poller owns the state until a fresh row arrives.
+  const STALE_AFTER_MS = 5 * 60 * 1000;
+  const isFresh = (row) => {
+    if (!row || !row.updated_at) return false;
+    const t = Date.parse(row.updated_at);
+    return !Number.isNaN(t) && (Date.now() - t) < STALE_AFTER_MS;
+  };
   const pushToEngine = () => {
     if (window.AROPL_LIVE && window.AROPL_LIVE.apply) {
       window.AROPL_LIVE.apply([...liveUsernames]);
@@ -50,7 +60,7 @@
         .order('username');
       if (error) throw error;
       liveUsernames.clear();
-      (data || []).forEach(r => { if (r && r.username && r.is_live) liveUsernames.add(String(r.username).toLowerCase()); });
+      (data || []).forEach(r => { if (r && r.username && r.is_live && isFresh(r)) liveUsernames.add(String(r.username).toLowerCase()); });
       pushToEngine();
     } catch (e) { console.warn('live-rt: bootstrap failed', e); }
   };

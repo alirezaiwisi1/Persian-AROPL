@@ -117,6 +117,17 @@ async function getJsonFile(file: string): Promise<{ sha: string; data: any }> {
   return { sha: j.sha, data: JSON.parse(decoded) };
 }
 
+/** Extract a YouTube video id from any URL form, mirroring the build
+    script's normalize_youtube (watch?v=, youtu.be/, embed/, shorts/, live/).
+    Without this, a youtu.be share link pasted by an editor looks new and
+    the watcher adds the same video a second time. */
+function extractVideoId(url: string): string {
+  return url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/)?.[1]
+    ?? url.match(/[?&]v=([A-Za-z0-9_-]{6,})/)?.[1]
+    ?? url.match(/youtube\.com\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{6,})/)?.[1]
+    ?? "";
+}
+
 function toEntry(videoId: string, ch: (typeof CHANNELS)[number], title: string) {
   return {
     url: `https://www.youtube.com/watch?v=${videoId}`,
@@ -203,9 +214,9 @@ Deno.serve(async (req) => {
         // Append at END of the videos array — build renders newest-first.
         const { sha, data } = await getJsonFile(ch.file);
         const existing = new Set(
-          (data.videos ?? []).map((v: any) =>
-            String(v.url || "").match(/[?&]v=([A-Za-z0-9_-]+)/)?.[1] || "",
-          ),
+          (data.videos ?? [])
+            .map((v: any) => extractVideoId(String(v.url || "")))
+            .filter(Boolean),
         );
         const toAdd = fresh.filter((v) => !existing.has(v.id));
         out.skippedInJson = fresh.length - toAdd.length;
@@ -220,9 +231,19 @@ Deno.serve(async (req) => {
           if (out.committed) out.added = toAdd.length;
         }
 
-        // Only mark videos seen after a successful commit. A failed commit
-        // leaves them unseen, so the next run retries them instead of
-        // losing them forever.
+        // Videos already in the JSON are on the site: mark them seen even
+        // when this run adds nothing (or its commit fails) — they are not
+        // new, and leaving them "fresh" forever hides real problems.
+        for (const v of fresh.filter((v) => existing.has(v.id))) {
+          await supabase.from("yt_seen").upsert({
+            video_id: v.id,
+            lang: ch.lang,
+            title: v.title,
+          });
+        }
+        // Only mark newly added videos seen after a successful commit. A
+        // failed commit leaves them unseen, so the next run retries them
+        // instead of losing them forever.
         if (out.committed) {
           for (const v of toAdd) {
             await supabase.from("yt_seen").upsert({

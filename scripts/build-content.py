@@ -236,9 +236,11 @@ def render_study_article(doc, lang):
         blocks = []
         for b in sec.get("blocks", []):
             btype = b.get("_template") or b.get("type") or "paragraph"
-            src = render_source_line(b) if btype == "quote" else b.get("source", "")
+            # Quote sources are safe HTML from render_source_line (it escapes
+            # every field itself); other blocks use a plain escaped string.
+            src = render_source_line(b) if btype == "quote" else esc(b.get("source", ""))
             blocks.append(STUDY_BLOCK_TPLS.get(btype, STUDY_BLOCK_TPLS["paragraph"])
-                          .format(text=esc(b.get("text", "")), source=esc(src)))
+                          .format(text=esc(b.get("text", "")), source=src))
         parts.append(STUDY_SECTION_TPL.format(sid=sid, num=esc(sec.get("num", "")),
                                               title=esc(sec.get("title") or sec.get("heading") or sec.get("headingFa") or ""), blocks=BR.join(blocks)))
     return ("\n\n").join(parts)
@@ -305,13 +307,18 @@ def render_footer_links(links):
 
 
 def render_source_line(quote):
-    """Render the <small> source exactly as before; structured sources[] if present."""
+    """Render the <small> source as safe HTML; structured sources[] if present.
+
+    Every user-supplied field is escaped here; the only literal markup is
+    the <a> built for a source URL, so callers must NOT escape the result.
+    """
     srcs = quote.get("sources")
     if srcs:
         parts = []
         for s2 in srcs:
-            if s2.get("extra") and not s2.get("book"):
-                parts.append(s2["extra"])
+            # "extra" replaces the automatic line (see its Tina label).
+            if s2.get("extra"):
+                text = esc(s2["extra"])
             else:
                 bits = [s2.get("book"), s2.get("author")]
                 if s2.get("volume"):
@@ -320,10 +327,15 @@ def render_source_line(quote):
                     bits.append("ص. " + s2["page"])
                 if s2.get("hadithNo"):
                     bits.append("حدیث " + s2["hadithNo"])
-                p = "، ".join(x for x in bits if x)
-                parts.append(p or s2.get("extra") or "")
-        return "؛ ".join(p for p in parts if p)
-    return quote.get("source", "")
+                if s2.get("chapter"):
+                    bits.append("باب " + s2["chapter"])
+                text = esc("، ".join(x for x in bits if x))
+            if s2.get("url"):
+                text += ' <a href="' + esc(s2["url"]) + '" target="_blank" rel="noopener">مشاهده منبع ↗</a>'
+            if text:
+                parts.append(text)
+        return "؛ ".join(parts)
+    return esc(quote.get("source", ""))
 
 
 def render_toc(html, fa_doc, en_doc):
@@ -396,7 +408,7 @@ def apply_shell_copy(html, st):
 
     html = sub(r'(<h1 id="hero-title">)[^<]*(<br>)', gv("heroTitle"), html)
     html = sub(r'(<h1 id="hero-title">[^<]*<br><span>)\([^<]*\)(</span></h1>)',
-               "(" + gv("heroTitleSuffix") + ")", html)
+               hero_title_suffix_repl(gv("heroTitleSuffix")), html)
     # hero paragraph: preserve <br> structure from JSON newlines
     hp = esc(st.get("heroParagraph") or "").replace("\n", "<br>")
     html = sub(r'(<h1 id="hero-title">.*?</h1>\s*\n\s*<p>).*?(</p>)', hp, html, re.S)
@@ -436,7 +448,7 @@ def write_roster(accounts):
     for i, a in enumerate(ordered):
         off = a.get("official")
         fields = ["username: %s" % json.dumps(a["username"], ensure_ascii=False),
-                  "name: %s" % json.dumps(a["displayName"], ensure_ascii=False),
+                  "name: %s" % json.dumps(a.get("displayName", ""), ensure_ascii=False),
                   "avatar: %s" % json.dumps((a.get("avatar") or "assets/images/tiktok/%s.webp" % a["username"]).lstrip("/"), ensure_ascii=False)]
         if off:
             fields.append("official: true")
@@ -446,6 +458,40 @@ def write_roster(accounts):
         fh.write(BR.join(lines) + BR)
 
 
+def hero_title_suffix_repl(value):
+    """Replacement for the hero title suffix: None keeps the template
+    default, "" clears the parentheses, otherwise wrap it in parens."""
+    if value is None:
+        return None
+    return "(" + value + ")" if value else ""
+
+
+def normalize_avatar(a, pub_dir):
+    """Convert one TikTok avatar to WebP, unless the target already exists
+    and is at least as new as the source. Returns True if it converted."""
+    u = (a.get("username") or "").strip()
+    if not u:
+        return False
+    target = os.path.join(pub_dir, "assets", "images", "tiktok", u + ".webp")
+    src = (a.get("avatar") or "").lstrip("/")
+    srcp = os.path.join(pub_dir, src) if src else ""
+    if not srcp or not os.path.isfile(srcp) or srcp.endswith(u + ".webp"):
+        return False
+    if os.path.isfile(target) and os.path.getmtime(target) >= os.path.getmtime(srcp):
+        a["avatar"] = "assets/images/tiktok/%s.webp" % u
+        return False
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    try:
+        from PIL import Image
+        Image.open(srcp).convert("RGBA").save(target, "WEBP", quality=88)
+        a["avatar"] = "assets/images/tiktok/%s.webp" % u
+        print("[build-content] avatar normalized:", u)
+        return True
+    except Exception as e:
+        print("[build-content] avatar convert failed for", u, e)
+        return False
+
+
 def main():
     st = load(os.path.join(CONTENT, "settings", "site.json"))
     books = load_dir("books")
@@ -453,21 +499,7 @@ def main():
     accounts = load_dir("tiktok")
     # Auto-normalize avatars: whatever Tina uploaded becomes assets/images/tiktok/<username>.webp
     for a in accounts:
-        u = (a.get("username") or "").strip()
-        if not u:
-            continue
-        target = os.path.join(PUB, "assets", "images", "tiktok", u + ".webp")
-        src = (a.get("avatar") or "").lstrip("/")
-        srcp = os.path.join(PUB, src) if src else ""
-        if srcp and os.path.isfile(srcp) and not srcp.endswith(u + ".webp"):
-            os.makedirs(os.path.dirname(target), exist_ok=True)
-            try:
-                from PIL import Image
-                Image.open(srcp).convert("RGBA").save(target, "WEBP", quality=88)
-                a["avatar"] = "assets/images/tiktok/%s.webp" % u
-                print("[build-content] avatar normalized:", u)
-            except Exception as e:
-                print("[build-content] avatar convert failed for", u, e)
+        normalize_avatar(a, PUB)
     study_fa = load(os.path.join(CONTENT, "study", "study-fa.json"))
     study_en = load(os.path.join(CONTENT, "study", "study-en.json"))
 

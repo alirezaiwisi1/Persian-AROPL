@@ -48,4 +48,58 @@ except SystemExit as e:
 else:
     raise AssertionError("must_search did not raise on a missing marker")
 
+# --- Re-audit 2026-11-07 fixes ---
+
+# Finding 2: write_roster tolerates a TikTok account without displayName.
+import tempfile
+_tmp = tempfile.mkdtemp()
+os.makedirs(os.path.join(_tmp, "assets", "js"), exist_ok=True)
+_old_pub = _mod.PUB
+_mod.PUB = _tmp
+try:
+    _mod.write_roster([
+        {"username": "no-name", "avatar": "assets/images/tiktok/no-name.webp"},
+        {"username": "has-name", "displayName": "Has Name"},
+    ])
+    _roster = open(os.path.join(_tmp, "assets", "js", "tiktok-accounts.js"), encoding="utf-8").read()
+    assert 'name: ""' in _roster, _roster
+    assert "no-name" in _roster and "Has Name" in _roster
+finally:
+    _mod.PUB = _old_pub
+
+# Finding 3: render_source_line renders chapter and URL, extra wins, and
+# escapes user input (it returns safe HTML; callers must not escape it).
+render_source_line = _mod.render_source_line
+_s = render_source_line({"sources": [{"book": "غیبت طوسی", "author": "شیخ طوسی", "chapter": "۳", "url": "https://example.com/book"}]})
+assert "باب ۳" in _s, _s
+assert '<a href="https://example.com/book"' in _s, _s
+_s = render_source_line({"sources": [{"book": "کتاب", "extra": "متن کامل"}]})
+assert _s == "متن کامل", _s
+_s = render_source_line({"sources": [{"book": "<script>alert(1)</script>"}]})
+assert "<script>" not in _s and "&lt;script&gt;" in _s, _s
+assert render_source_line({"source": "منبع <b>قدیمی</b>"}) == "منبع &lt;b&gt;قدیمی&lt;/b&gt;"
+
+# Finding 6: hero title suffix — missing key keeps the template default
+# (None), empty clears the parentheses, a value is wrapped in parens.
+assert _mod.hero_title_suffix_repl(None) is None
+assert _mod.hero_title_suffix_repl("") == ""
+assert _mod.hero_title_suffix_repl("متن") == "(متن)"
+
+# Finding 8: normalize_avatar converts once, then skips when the target is
+# at least as new as the source.
+from PIL import Image as _Image
+_tmp2 = tempfile.mkdtemp()
+_src_dir = os.path.join(_tmp2, "up")
+os.makedirs(_src_dir, exist_ok=True)
+_src = os.path.join(_src_dir, "a.png")
+_Image.new("RGBA", (4, 4), (255, 0, 0, 255)).save(_src, "PNG")
+_a = {"username": "a", "avatar": "up/a.png"}
+assert _mod.normalize_avatar(_a, _tmp2) is True
+_target = os.path.join(_tmp2, "assets", "images", "tiktok", "a.webp")
+assert os.path.isfile(_target)
+assert _a["avatar"] == "assets/images/tiktok/a.webp"
+_mtime = os.path.getmtime(_target)
+assert _mod.normalize_avatar(_a, _tmp2) is False
+assert os.path.getmtime(_target) == _mtime
+
 print("test_build_content: ok")

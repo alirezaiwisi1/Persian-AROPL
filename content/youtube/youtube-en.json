@@ -11,38 +11,38 @@
   "videos": [
     {
       "url": "https://www.youtube.com/watch?v=k5MP4vIxMlY",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/k5MP4vIxMlY/hqdefault.jpg",
       "thumbAlt": "Featured video 10",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "The Coming Persecution of Muslims and Arabs - الاضطهاد القادم للمسلمين والعرب",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=c97Zsur1v_w",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/c97Zsur1v_w/hqdefault.jpg",
       "thumbAlt": "Featured video 9",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "The Mahdi is making Adhan, calling the people - المهدي يؤذن في الناس",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=7ms2Eivda3c",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/7ms2Eivda3c/hqdefault.jpg",
       "thumbAlt": "Featured video 8",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "Why Some Believers Give Up Everything - لماذا يتخلى بعض المؤمنين عن كل شيء",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=LZ1EOUO1ljo",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/LZ1EOUO1ljo/hqdefault.jpg",
       "thumbAlt": "Featured video 7",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "The Mystery Religion | الدين السري",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
@@ -56,11 +56,11 @@
     },
     {
       "url": "https://www.youtube.com/watch?v=-I9wXg5ojDU",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/-I9wXg5ojDU/hqdefault.jpg",
       "thumbAlt": "Featured video 5",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "The Hidden Mystery School Within Islam - المدرسة الباطنية السرية في الإسلام",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
@@ -92,20 +92,22 @@
     },
     {
       "url": "https://www.youtube.com/watch?v=ein49DoKjCY",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/ein49DoKjCY/hqdefault.jpg",
       "thumbAlt": "Featured video 1",
       "channelLabel": "THE MAHDI HAS APPEARED",
-      "title": "Featured video",
+      "title": "Why Prophets Are Rejected by Their Own Families - سبب رفض الانبياء من قبل ذوويهم",
       "ctaLabel": "Watch on YouTube ↗"
     },
     {
       "url": "https://youtu.be/Tim45alAZw0?is=CYOM_4DET1v-TiHn",
-      "autoTitle": true
+      "autoTitle": false,
+      "title": "The False Allegations Against the Prophets - الاتهامات الباطلة ضد الأنبياء"
     },
     {
       "url": "https://youtu.be/RReddIsQUUE?is=7WKrasIV-l_URhJK",
-      "autoTitle": true
+      "autoTitle": false,
+      "title": "Are Statues Forbidden in Monotheistic Faiths? - هل التماثيل محرمة في الأديان الموحدة؟"
     }
   ]
 }

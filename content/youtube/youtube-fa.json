@@ -11,149 +11,150 @@
   "videos": [
     {
       "url": "https://www.youtube.com/watch?v=w-R6gELU3Q0",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/w-R6gELU3Q0/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 10",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "پاسخ به جاهلان، کسانی که امام زمان خود را نشناختند و با او بیعت ندارند و او را انکار می‌کنند",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=viMKt98ZZno",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/viMKt98ZZno/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 9",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "ابلیس خالق این جهان است از علوم قائم آل محمد عبدالله هاشم ابا صادق  Abdullah Hashem",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=elADsCllEuo",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/elADsCllEuo/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 8",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "امام مهدی ع ظهور کرده است از علوم قائم آل محمد عبدالله هاشم ابا صادق Abdullah Hashem",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=2IsTHGvTzG0",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/2IsTHGvTzG0/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 7",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "احمد الحسن کجاست؟ Abdullah Hashem",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=xnETzm-qyqo",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/xnETzm-qyqo/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 6",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "سفیانی چه کسی است و نشانه های او چیست؟ از علوم قائم آل محمد",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=XMjP1ZygPTc",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/XMjP1ZygPTc/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 5",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "سخنرانی قائم آل محمد عبدالله هاشم اباالصادق ع",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=UXsOo7ZzvBI",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/UXsOo7ZzvBI/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 4",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "دعوت امام مهدی ع برای عضویت در قوم منتخب خدا - ABDULLAH HASHEM",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=9-pGpY4d6yM",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/9-pGpY4d6yM/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 3",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "جنگ ایران و اسرائیل و سرنوشت مسلمانان",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=W9g-Pfiezlw",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/W9g-Pfiezlw/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 2",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "چرا خداوند هرگز جویندهٔ مخلص را گمراه نمی‌کند - Abdullah Hashem Aba AlSadiq FHIP",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=UTHBV-XXf2A",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/UTHBV-XXf2A/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی 1",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "مهدی به نامه‌ی کارگر جنسی در ایران پاسخ می‌دهد از علوم قائم آل محمد عبدالله هاشم ابا صادق",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://youtu.be/NKHoohDvfN4?si=nVSZK9A8aPyOFov-",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیو منتخب",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "چرا پیامبران از سوی خانواده‌ی خود انکار می‌شوند",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=qKwFnccZRRs",
-      "autoTitle": true
+      "autoTitle": false,
+      "title": "اتهامات دروغین علیه پیامبران"
     },
     {
       "url": "https://www.youtube.com/watch?v=BzXQGotdcq0",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/BzXQGotdcq0/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "جادو: علم پیامبران",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=6DbjTOfiDX0",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/6DbjTOfiDX0/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "سازمان حقوق بشر بدون مرز در نشست سازمان امنیت و همکاری اروپا ۲۰۲۶ درباره حمله به (AROPL) در بریتانیا",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=TkBbiejQjZg",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/TkBbiejQjZg/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "آنچه عقل درباره‌ی خدا به هرمس گفت",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=z94DGojYMf8",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/z94DGojYMf8/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "گام‌های عملی برای همانند خدا شدن",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
       "url": "https://www.youtube.com/watch?v=KOwmYLWMHUI",
-      "autoTitle": true,
+      "autoTitle": false,
       "thumb": "https://i.ytimg.com/vi/KOwmYLWMHUI/hqdefault.jpg",
       "thumbAlt": "ویدیوی منتخب فارسی",
       "channelLabel": "ویدیوی فارسی",
-      "title": "ویدیوی منتخب فارسی",
+      "title": "مهدی راز سنگ فیلسوفان (سنگ جادو) را آشکار می‌کند",
       "ctaLabel": "مشاهده در YouTube ↗"
     },
     {
