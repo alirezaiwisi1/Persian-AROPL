@@ -11,3 +11,4 @@ wrangler.local.toml
 _extract.json
 tina/__generated__/
 supabase/.temp/
+public/admin/
