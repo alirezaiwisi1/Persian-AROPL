@@ -1,0 +1,51 @@
+name: youtube-watcher
+# Root-cause replacement for the Supabase youtube-watcher Edge Function.
+# The Supabase watcher needed a GitHub PAT stored as a Supabase secret;
+# the secret-setting helper stored a surrogate string instead of the real
+# token, so GitHub rejected every commit with 401 and new videos never
+# reached the repo. This workflow needs no stored token: it commits with
+# the built-in GITHUB_TOKEN GitHub issues fresh for every run.
+# Schedule: every 30 minutes, same cadence as the old pg_cron job.
+# After this workflow's first successful run, unschedule the Supabase
+# job so the two watchers do not race:
+#   Supabase Dashboard -> SQL Editor -> select cron.unschedule('aropl-yt-watcher');
+# The Supabase GITHUB_TOKEN secret then becomes unused. The TikTok
+# watcher is untouched. A commit here does NOT auto-deploy the live
+# site: the user still deploys manually from the Cloudflare dashboard.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: youtube-watcher
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - run: python3 scripts/test_build_content.py
+      - name: check YouTube feeds for new videos
+        run: python3 scripts/youtube-watcher.py
+      # Regenerate the site so the committed HTML stays in sync with the
+      # JSON (the build workflow's drift check requires this).
+      - run: python3 scripts/build-content.py
+      - name: commit new videos, if any
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "no new videos"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/youtube/youtube-fa.json content/youtube/youtube-en.json \
+            public/index.html public/study.html \
+            public/assets/js/config.js public/assets/js/tiktok-accounts.js
+          git commit -m "automation: add new YouTube video(s) (github-actions watcher)"
+          git push
