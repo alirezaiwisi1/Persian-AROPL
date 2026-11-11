@@ -165,6 +165,15 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "ما کشتی هستیم: جماعتی که از طوفان نجات می‌یابد",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=7E1KPi3zqDU",
+      "autoTitle": false,
+      "thumb": "https://i.ytimg.com/vi/7E1KPi3zqDU/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "افکار ما واقعاً از کجا می‌آیند؟",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
