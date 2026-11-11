@@ -38,7 +38,9 @@ jobs:
       - run: python3 scripts/build-content.py
       - name: commit new videos, if any
         run: |
-          if [ -z "$(git status --porcelain)" ]; then
+          # Untracked files (e.g. scripts/__pycache__ from the test step)
+          # must not count as "new videos": only tracked changes matter.
+          if [ -z "$(git status --porcelain --untracked-files=no)" ]; then
             echo "no new videos"
             exit 0
           fi
