@@ -174,6 +174,15 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "افکار ما واقعاً از کجا می‌آیند؟",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=lGRXBsuyhZQ",
+      "autoTitle": false,
+      "thumb": "https://i.ytimg.com/vi/lGRXBsuyhZQ/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "اسطوره‌ی اِر- زندگی پس از مرگ از نگاه سقراط",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
