@@ -125,3 +125,21 @@
   document.addEventListener('DOMContentLoaded',fit);
   fit(); window.__fitRan=true;
 })();
+
+/* Live section: on mobile only the featured card shows; "بیشتر" reveals the rest.
+   Pure class toggle — the CSS (max-width:720px) decides what is hidden, so on
+   desktop the button is hidden and every card stays visible. */
+(() => {
+  const section = document.getElementById('live');
+  if (!section) return;
+  const grid = section.querySelector('.live-grid');
+  const btn = section.querySelector('.live-more');
+  if (!grid || !btn) return;
+  const label = btn.querySelector('.live-more-text');
+  const set = open => {
+    grid.classList.toggle('expanded', open);
+    btn.setAttribute('aria-expanded', String(open));
+    if (label) label.textContent = open ? 'کمتر' : 'بیشتر';
+  };
+  btn.addEventListener('click', () => set(!grid.classList.contains('expanded')));
+})();
