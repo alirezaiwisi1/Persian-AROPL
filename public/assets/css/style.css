@@ -1121,8 +1121,22 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .live-note.is-error{color:#d9a35a}
 
 /* "بیشتر" — mobile only: the live grid collapses to the featured card.
-   Desktop keeps the button hidden and shows every card. */
-.live-more{display:none}
+   Desktop keeps the button hidden and shows every card.
+   NOTE: .outline-button sets no background, and the other outline-buttons on
+   the site are <a> links (transparent by default) — but this one is a real
+   <button>, so without an explicit background the browser paints its default
+   white ButtonFace. Give it the live cards' own dark gradient, gold text and
+   16px radius so it reads as part of the live section. */
+.live-more{
+  display:none;
+  background:linear-gradient(145deg,#14161a,#0c0e11);
+  border:1px solid rgba(253,195,94,.55);
+  border-radius:16px;
+  color:var(--gold);
+}
+.live-more:hover,.live-more:focus-visible{
+  background:linear-gradient(rgba(253,195,94,.12),rgba(253,195,94,.12)),linear-gradient(145deg,#14161a,#0c0e11);
+}
 .live-more svg{width:18px;height:18px;flex:none;transition:transform .3s}
 .live-more[aria-expanded="true"] svg{transform:rotate(180deg)}
 
