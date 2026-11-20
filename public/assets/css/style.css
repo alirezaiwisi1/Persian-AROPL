@@ -514,6 +514,13 @@
 .face-front img{width:100%;height:100%;object-fit:cover;display:block;max-width:none;pointer-events:none}
 .face-front:before{content:"";position:absolute;inset:0 0 0 auto;width:8%;z-index:1;background:linear-gradient(270deg,rgba(0,0,0,.45),rgba(255,255,255,.07) 40%,transparent)}
 .face-front:after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.2) 49%,transparent 60%);background-size:260% 100%;background-position:var(--shine,60%) 0}
+
+/* Award badge on the Goal of the Wise cover: top-left of the front face, so it
+   turns with the 3D book. Width is a % of the cover, so it scales at every
+   breakpoint. The badge art is opaque black, which blends with the black
+   cover; the soft gold glow lifts it off the cover. Selector must beat
+   .face-front img (width:100%) — hence img.book-award. */
+.face-front img.book-award{position:absolute;top:3%;left:3%;width:38%;height:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 0 8px rgba(253,195,94,.3))}
 .face-back{transform:rotateY(180deg) translateZ(calc(var(--t)/2));background:#0a0a0b;border-radius:2px 6px 6px 2px}
 .face-spine,.face-pages{top:0;bottom:0;width:var(--t);left:calc((var(--w) - var(--t))/2)}
 .face-spine{transform:rotateY(90deg) translateZ(calc(var(--w)/2));display:grid;place-items:center;overflow:hidden}

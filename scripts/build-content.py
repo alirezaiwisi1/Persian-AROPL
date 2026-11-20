@@ -78,7 +78,7 @@ BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
           <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
             <div class="stage-glow" aria-hidden="true"></div>
             <div class="book-float"><div class="book3d">
-              <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false"></div>
+              <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false">{award}</div>
               <div class="face face-back"></div>
               <div class="face face-spine"><span>{spineLabel}</span></div>
               <div class="face face-pages"></div><div class="face face-top"></div><div class="face face-bottom"></div>
@@ -133,6 +133,15 @@ LIVECARD_FEATURED = """        <a class="live-card live-card--featured reveal" d
           <span class="live-action"><span class="live-action-text">مشاهده پروفایل</span><b class="net-arrow" aria-hidden="true">↗</b></span>
         </a>"""
 
+# Award badge for the Goal of the Wise (Winner — Italy International Book
+# Award 2025). Rendered only for variant "goal", inside .face-front so it
+# turns with the 3D book. The art is opaque black, which blends with the
+# black cover — a transparency cutout was tried and rejected: it ate the
+# medallion's black centre and the trophy's black marble base.
+AWARD_BADGE = ('<img class="book-award" src="assets/images/award-italy-2025.webp" '
+               'alt="Winner — Italy International Book Award 2025" '
+               'width="480" height="384" loading="lazy" draggable="false">')
+
 STUDY_SECTION_TPL = """      <section class="article-section" id="{sid}">
         <h2><i class="sec-num">{num}</i><span>{title}</span></h2>
 {blocks}
@@ -154,6 +163,7 @@ def render_books(books):
             spine=spine_map.get(b.get("variant", ""), "gold"),
             ratio=b.get("coverRatio", 0.65), coverWidth=b.get("coverWidth", 826), ry=b.get("restRotateY", -24), rx=b.get("restRotateX", 4),
             cover=esc(b.get("coverImage", "")), coverAlt=esc(b.get("coverAlt", "")),
+            award=AWARD_BADGE if b.get("variant") == "goal" else "",
             spineLabel=esc(b.get("spineLabel", "")),
             titleFa=allow_title_html(b.get("titleFa", "")),  # only <br> and <em> survive; the rest is escaped
             descriptionFa=esc(b.get("descriptionFa", "")),
