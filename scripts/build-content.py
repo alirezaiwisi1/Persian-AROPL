@@ -78,11 +78,11 @@ BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
           <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
             <div class="stage-glow" aria-hidden="true"></div>
             <div class="book-float"><div class="book3d">
-              <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false">{award}</div>
+              <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false"></div>
               <div class="face face-back"></div>
               <div class="face face-spine"><span>{spineLabel}</span></div>
               <div class="face face-pages"></div><div class="face face-top"></div><div class="face face-bottom"></div>
-            </div></div>
+            </div></div>{award}
             <div class="book-shadow" aria-hidden="true"></div>
             <p class="stage-hint" aria-hidden="true">برای چرخاندن بکشید</p>
           </div>
@@ -134,10 +134,11 @@ LIVECARD_FEATURED = """        <a class="live-card live-card--featured reveal" d
         </a>"""
 
 # Award badge for the Goal of the Wise (Winner — Italy International Book
-# Award 2025). Rendered only for variant "goal", inside .face-front so it
-# turns with the 3D book. The art is opaque black, which blends with the
-# black cover — a transparency cutout was tried and rejected: it ate the
-# medallion's black centre and the trophy's black marble base.
+# Award 2025). Rendered only for variant "goal", as a direct child of
+# .book-stage — OUTSIDE .book-float/.book3d — so it never rotates or bobs
+# with the book. The art is transparent (black background removed by
+# flood-fill from the borders; the medallion centre and trophy base survive
+# because the gold ring/trim encloses them).
 AWARD_BADGE = ('<img class="book-award" src="assets/images/award-italy-2025.webp" '
                'alt="Winner — Italy International Book Award 2025" '
                'width="480" height="384" loading="lazy" draggable="false">')
