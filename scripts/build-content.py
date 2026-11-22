@@ -25,6 +25,26 @@ TPL = os.path.join(ROOT, "templates")
 CONTENT = os.path.join(ROOT, "content")
 BR = "\n"
 
+# Dedicated pages (SEO content expansion). The book detail pages live under
+# /books/<slug>/ and the religion overview under /religion-of-peace-and-light/.
+# Publication dates are verified: Goal Dec 2022 (study page, §07);
+# Manifesto Nov 2024 (its PDF CreationDate). Keep these in sync with the
+# TinaCMS book/religion collections when a slug or date changes.
+SITE_URL = "https://aroplfarsi.pages.dev"
+RELIGION_PATH = "/religion-of-peace-and-light/"
+BOOK_PAGE_PATHS = {
+    "goal": "/books/the-goal-of-the-wise/",
+    "manifesto": "/books/the-mahdis-manifesto/",
+}
+BOOK_PUBLISHED = {
+    "goal": "2022-12",
+    "manifesto": "2024",
+}
+BOOK_EN_TITLES = {
+    "goal": "The Goal of the Wise",
+    "manifesto": "The Mahdi's Manifesto",
+}
+
 
 def load(path):
     with open(path, encoding="utf-8") as fh:
@@ -88,7 +108,7 @@ BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
           </div>
           <div class="book-body">
 {blank}
-            <h3>{titleFa}</h3>
+            <h3><a href="{pageUrl}">{titleFa}</a></h3>
             <p>{descriptionFa}</p>
             <div class="book-actions">
               <a class="gold-button small" href="{pdfUrl}" target="_blank" rel="noopener">مطالعه PDF ↗</a>
@@ -139,7 +159,7 @@ LIVECARD_FEATURED = """        <a class="live-card live-card--featured reveal" d
 # with the book. The art is transparent (black background removed by
 # flood-fill from the borders; the medallion centre and trophy base survive
 # because the gold ring/trim encloses them).
-AWARD_BADGE = ('<img class="book-award" src="assets/images/award-italy-2025.webp" '
+AWARD_BADGE = ('<img class="book-award" src="/assets/images/award-italy-2025.webp" '
                'alt="Winner — Italy International Book Award 2025" '
                'width="480" height="384" loading="lazy" draggable="false">')
 
@@ -159,18 +179,219 @@ STUDY_BLOCK_TPLS = {
 def render_books(books):
     out, spine_map = [], {"manifesto": "gold", "goal": "black"}
     for b in sorted(books, key=lambda x: (x.get("order", 0), x.get("variant", ""))):
+        # The card is rendered on the homepage (root) AND on the religion
+        # page (a subdirectory), so its asset/link paths must be
+        # root-relative; a book without a dedicated page falls back to #books.
         out.append(BOOK_TPL.format(
             variant=esc(b.get("variant", "")),
             spine=spine_map.get(b.get("variant", ""), "gold"),
             ratio=b.get("coverRatio", 0.65), coverWidth=b.get("coverWidth", 826), ry=b.get("restRotateY", -24), rx=b.get("restRotateX", 4),
-            cover=esc(b.get("coverImage", "")), coverAlt=esc(b.get("coverAlt", "")),
+            cover=esc(root_rel(b.get("coverImage", ""))), coverAlt=esc(b.get("coverAlt", "")),
             award=AWARD_BADGE if b.get("variant") == "goal" else "",
             spineLabel=esc(b.get("spineLabel", "")),
+            pageUrl=BOOK_PAGE_PATHS.get(b.get("slug") or b.get("variant", ""), "/#books"),
             titleFa=allow_title_html(b.get("titleFa", "")),  # only <br> and <em> survive; the rest is escaped
             descriptionFa=esc(b.get("descriptionFa", "")),
-            pdfUrl=esc(b.get("pdfUrl", "")), audioUrl=esc(b.get("audioUrl", "")),
+            pdfUrl=esc(root_rel(b.get("pdfUrl", ""))), audioUrl=esc(b.get("audioUrl", "")),
             officialUrl=esc(b.get("officialUrl", "")), blank="            "))
     return BR.join(out)
+
+
+def plain_title(title_html):
+    """Strip the <br>/<em> from a book titleFa for plain-text contexts
+    (SEO title, breadcrumb, JSON-LD name)."""
+    text = re.sub(r"<br\s*/?>", " ", title_html or "")
+    text = re.sub(r"</?em>", "", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def root_rel(path):
+    """Make a repo-relative asset path root-relative, so it works from a
+    page in a subdirectory too. Absolute URLs and anchors pass through."""
+    p = (path or "").strip()
+    if not p or p.startswith(("http://", "https://", "/", "#", "data:")):
+        return p
+    return "/" + p.lstrip("/")
+
+
+def render_paragraphs(text):
+    """Split text on blank lines into <p> elements; single newlines become <br>."""
+    paras = []
+    for chunk in re.split(r"\n\s*\n", (text or "").strip()):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        paras.append("<p>" + esc(chunk).replace("\n", "<br>") + "</p>")
+    return BR.join(paras)
+
+
+def render_page_sections(sections):
+    """Render [{heading, text}] as .article-section blocks (h2 + paragraphs)."""
+    out = []
+    for s in sections or []:
+        out.append('    <section class="article-section">\n      <h2><span>{}</span></h2>\n{}\n    </section>'.format(
+            esc(s.get("heading", "")), render_paragraphs(s.get("text", ""))))
+    return BR.join(out)
+
+
+def fill_token(html, name, value):
+    """Replace every <!-- NAME --> inline token with value (same value in
+    <title>, og:title, twitter:title, ...)."""
+    token = "<!-- " + name + " -->"
+    if token not in html:
+        raise SystemExit(f"[build-content] template token missing: {name}")
+    return html.replace(token, value)
+
+
+def fill_region(html, name, content):
+    """Replace the <!-- NAME --> ... <!-- /NAME --> region (markers removed)
+    with content."""
+    pat = re.compile(r"<!-- " + re.escape(name) + r" -->.*?<!-- /" + re.escape(name) + r" -->", re.S)
+    m = pat.search(html)
+    if not m:
+        raise SystemExit(f"[build-content] template marker missing: {name}")
+    return html[:m.start()] + content + html[m.end():]
+
+
+# Book detail-page hero: the same 3D book stage as the homepage card, with
+# the title, intro and download actions beside it. All asset paths are
+# root-relative because the page lives under /books/<slug>/.
+BOOK_HERO_TPL = """  <section class="book-hero reveal">
+    <div class="book-hero-stage">
+      <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
+        <div class="stage-glow" aria-hidden="true"></div>
+        <div class="book-float"><div class="book3d">
+          <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false"></div>
+          <div class="face face-back"></div>
+          <div class="face face-spine"><span>{spineLabel}</span></div>
+          <div class="face face-pages"></div><div class="face face-top"></div><div class="face face-bottom"></div>
+        </div></div>{award}
+        <div class="book-shadow" aria-hidden="true"></div>
+        <p class="stage-hint" aria-hidden="true">برای چرخاندن بکشید</p>
+      </div>
+    </div>
+    <div class="book-hero-body">
+      <span class="kicker">کتاب</span>
+      <h1>{titleFa}</h1>
+      <p class="book-hero-author">عبدالله هاشم ابا الصادق</p>
+{intro}
+      <div class="book-actions">
+        <a class="gold-button" href="{pdfUrl}" target="_blank" rel="noopener">دانلود PDF ↗</a>
+        <a class="outline-button" href="{audioUrl}" target="_blank" rel="noopener">خوانش صوتی ↗</a>
+        <a class="text-link" href="{officialUrl}" target="_blank" rel="noopener">دانلود رسمی ↗</a>
+      </div>
+    </div>
+  </section>"""
+
+
+def render_book_hero(book):
+    spine_map = {"manifesto": "gold", "goal": "black"}
+    return BOOK_HERO_TPL.format(
+        spine=spine_map.get(book.get("variant", ""), "gold"),
+        ratio=book.get("coverRatio", 0.65), coverWidth=book.get("coverWidth", 826),
+        ry=book.get("restRotateY", -24), rx=book.get("restRotateX", 4),
+        cover=esc(root_rel(book.get("coverImage", ""))), coverAlt=esc(book.get("coverAlt", "")),
+        award=AWARD_BADGE if book.get("variant") == "goal" else "",
+        spineLabel=esc(book.get("spineLabel", "")),
+        titleFa=allow_title_html(book.get("titleFa", "")),
+        intro=render_paragraphs(book.get("pageIntro") or book.get("descriptionFa", "")),
+        pdfUrl=esc(root_rel(book.get("pdfUrl", ""))), audioUrl=esc(book.get("audioUrl", "")),
+        officialUrl=esc(book.get("officialUrl", "")))
+
+
+def render_book_related(book, books):
+    """Links from one book page to the other book, the religion overview
+    and the study page."""
+    others = [o for o in books if (o.get("slug") or o.get("variant", "")) != (book.get("slug") or book.get("variant", ""))]
+    links = []
+    for o in others:
+        path = BOOK_PAGE_PATHS.get(o.get("slug") or o.get("variant", ""), "/#books")
+        links.append('        <a class="outline-button" href="%s">%s ↗</a>' % (path, esc(plain_title(o.get("titleFa", "")))))
+    links.append('        <a class="outline-button" href="%s">دین صلح و نور احمدی ↗</a>' % RELIGION_PATH)
+    links.append('        <a class="outline-button" href="/study">مطالعه و آشنایی ↗</a>')
+    return ('    <section class="article-section">\n'
+            '      <h2><span>بیشتر بخوان</span></h2>\n'
+            '      <p>کتاب دیگر و منابع مطالعه را از اینجا ادامه بده.</p>\n'
+            '      <div class="cta-actions">\n' + BR.join(links) + '\n      </div>\n'
+            '    </section>')
+
+
+def book_jsonld(book, page_url):
+    """WebPage + BreadcrumbList + Book. Only verified properties: the
+    author, language, format, publication date (see BOOK_PUBLISHED) and,
+    for the Goal book, the award named in the site's own content."""
+    slug = book.get("slug") or book.get("variant", "")
+    plain = plain_title(book.get("titleFa", ""))
+    book_entity = {
+        "@type": "Book",
+        "@id": page_url + "#book",
+        "name": plain,
+        "alternateName": BOOK_EN_TITLES.get(slug, ""),
+        "author": {"@type": "Person", "name": "Abdullah Hashem Aba Al-Sadiq"},
+        "inLanguage": "fa",
+        "bookFormat": "https://schema.org/EBook",
+        "url": page_url,
+        "description": book.get("pageMetaDescription") or book.get("descriptionFa", ""),
+        "datePublished": BOOK_PUBLISHED.get(slug, ""),
+    }
+    if slug == "goal":
+        book_entity["award"] = "Italy International Book Award 2025"
+    data = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebPage",
+                "@id": page_url + "#webpage",
+                "url": page_url,
+                "name": book.get("pageTitle") or plain,
+                "inLanguage": "fa",
+                "isPartOf": {"@id": SITE_URL + "/#website"},
+                "about": {"@id": SITE_URL + "/#organization"},
+                "breadcrumb": {"@id": page_url + "#breadcrumb"},
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": page_url + "#breadcrumb",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "دین صلح و نور احمدی", "item": SITE_URL + "/"},
+                    {"@type": "ListItem", "position": 2, "name": "کتاب‌ها", "item": SITE_URL + "/#books"},
+                    {"@type": "ListItem", "position": 3, "name": plain, "item": page_url},
+                ],
+            },
+            book_entity,
+        ],
+    }
+    return json.dumps(data, ensure_ascii=False, indent=2)
+
+
+def religion_jsonld(doc):
+    """WebPage + BreadcrumbList for the religion overview; the Organization
+    itself is defined on the homepage and referenced here by @id."""
+    page_url = SITE_URL + RELIGION_PATH
+    data = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebPage",
+                "@id": page_url + "#webpage",
+                "url": page_url,
+                "name": doc.get("pageTitle", ""),
+                "inLanguage": "fa",
+                "isPartOf": {"@id": SITE_URL + "/#website"},
+                "about": {"@id": SITE_URL + "/#organization"},
+                "breadcrumb": {"@id": page_url + "#breadcrumb"},
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": page_url + "#breadcrumb",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "دین صلح و نور احمدی", "item": SITE_URL + "/"},
+                    {"@type": "ListItem", "position": 2, "name": "دین صلح و نور احمدی", "item": page_url},
+                ],
+            },
+        ],
+    }
+    return json.dumps(data, ensure_ascii=False, indent=2)
 
 
 YT_DEFAULTS = {
@@ -593,8 +814,58 @@ def main():
     with open(os.path.join(PUB, "study.html"), "w", encoding="utf-8") as fh:
         fh.write(std)
 
+    # ================= book pages =================
+    book_tpl = open(os.path.join(TPL, "book.html"), encoding="utf-8").read()
+    for b in books:
+        slug = b.get("slug") or b.get("variant", "")
+        path = BOOK_PAGE_PATHS.get(slug)
+        if not path:
+            continue
+        page_url = SITE_URL + path
+        html = book_tpl
+        html = fill_token(html, "BOOK_TITLE", esc(b.get("pageTitle") or plain_title(b.get("titleFa", ""))))
+        html = fill_token(html, "BOOK_META", esc(b.get("pageMetaDescription") or b.get("descriptionFa", "")))
+        html = fill_token(html, "BOOK_CANONICAL", page_url)
+        html = fill_token(html, "BOOK_COVER_ABS", SITE_URL + root_rel(b.get("coverImage", "")))
+        html = fill_token(html, "BOOK_CRUMB", esc(plain_title(b.get("titleFa", ""))))
+        html = fill_region(html, "BOOK_JSONLD",
+                           '  <script type="application/ld+json">\n' + book_jsonld(b, page_url) + '\n  </script>')
+        html = fill_region(html, "BOOK_HERO", render_book_hero(b))
+        html = fill_region(html, "BOOK_SECTIONS", render_page_sections(b.get("pageSections", [])))
+        html = fill_region(html, "BOOK_RELATED", render_book_related(b, books))
+        out_path = os.path.join(PUB, path.strip("/"), "index.html")
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as fh:
+            fh.write(html)
+
+    # ================= religion overview =================
+    rel = load(os.path.join(CONTENT, "religion", "religion.json"))
+    rel_html = open(os.path.join(TPL, "religion.html"), encoding="utf-8").read()
+    rel_html = fill_token(rel_html, "RELIGION_TITLE", esc(rel.get("pageTitle", "")))
+    rel_html = fill_token(rel_html, "RELIGION_META", esc(rel.get("metaDescription", "")))
+    rel_html = fill_token(rel_html, "RELIGION_KICKER", esc(rel.get("kicker", "")))
+    rel_html = fill_token(rel_html, "RELIGION_H1", esc(rel.get("title", "")))
+    rel_html = fill_region(rel_html, "RELIGION_JSONLD",
+                           '  <script type="application/ld+json">\n' + religion_jsonld(rel) + '\n  </script>')
+    rel_html = fill_region(rel_html, "RELIGION_LEAD", render_paragraphs(rel.get("lead", "")))
+    rel_html = fill_region(rel_html, "RELIGION_SECTIONS", render_page_sections(rel.get("sections", [])))
+    books_block = ('    <section class="article-section religion-books">\n'
+                   '      <h2><span>کتاب‌های دین صلح و نور احمدی</span></h2>\n'
+                   '      <p>دو کتاب اصلی دین صلح و نور احمدی را از همین سایت بخوان و دانلود کن.</p>\n'
+                   '      <div class="books-stack">\n' + render_books(books) + '\n      </div>\n'
+                   '    </section>')
+    rel_html = fill_region(rel_html, "RELIGION_BOOKS", books_block)
+    rel_out = os.path.join(PUB, RELIGION_PATH.strip("/"), "index.html")
+    os.makedirs(os.path.dirname(rel_out), exist_ok=True)
+    with open(rel_out, "w", encoding="utf-8") as fh:
+        fh.write(rel_html)
+
     print("[build-content] books=%d youtube=%d accounts=%d study_fa=%d study_en=%d"
           % (len(books), len(youtube), len(accounts), len(study_fa["sections"]), len(study_en["sections"])))
+
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 
 if __name__ == "__main__":

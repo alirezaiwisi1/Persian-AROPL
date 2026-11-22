@@ -1276,3 +1276,38 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
   .hero h1{font-size:calc(12cqw*var(--ht-scale-m,1))}
   .hero-content{top:var(--ht-shift-m,0px)}
 }
+
+/* Dedicated pages (SEO content expansion): breadcrumb + book hero */
+.breadcrumb{width:min(100%,980px);margin:0 auto;padding:26px 22px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.breadcrumb a{color:var(--gold)}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb [aria-current="page"]{color:var(--text)}
+.breadcrumb--top{padding-top:calc(var(--header) + 26px)}
+
+/* Book detail hero: the 3D book beside the title, intro and download actions */
+.book-hero{width:min(100%,var(--max));margin:0 auto;padding:calc(var(--header) + 44px) clamp(20px,5vw,44px) clamp(56px,8vw,96px);display:grid;grid-template-columns:minmax(300px,440px) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:center}
+.book-hero-stage .book-stage{border:1px solid rgba(255,255,255,.07);border-radius:16px;min-height:560px}
+.book-hero .book-stage.spine-black{background:#e5e1d5;border-inline-end:0;border-inline-start:1px solid rgba(20,20,20,.08)}
+.book-hero-body .kicker{display:block;margin-bottom:10px}
+.book-hero-body h1{font-size:clamp(2.2rem,5.5vw,4rem);line-height:1.15;margin:0 0 10px;font-weight:800}
+.book-hero-body h1 em{font-style:normal;color:var(--gold);font-weight:500}
+.book-hero-author{color:var(--gold);font-weight:700;font-size:.95rem;margin:0 0 18px}
+.book-hero-body p{color:#ded9d0;font-size:1rem}
+.book-hero-body .book-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px}
+.book-hero-body .book-actions .gold-button,.book-hero-body .book-actions .outline-button{min-height:52px;padding-inline:24px}
+.book-hero-body .book-actions .text-link{min-height:52px;display:inline-flex;align-items:center;padding-inline:6px}
+
+/* Book-card title is now a link to the book page: underline on hover */
+.books-stack .book-body h3 a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* Religion page: the two book cards stack inside the article */
+.religion-books .books-stack{margin-top:28px}
+
+@media(max-width:850px){
+  .book-hero{grid-template-columns:1fr;padding-top:calc(var(--header) + 28px)}
+  .book-hero-stage .book-stage{min-height:500px}
+}
+@media(max-width:560px){
+  .book-hero-stage .book-stage{min-height:420px}
+  .book-hero-body .book-actions{flex-direction:column;align-items:center}
+}

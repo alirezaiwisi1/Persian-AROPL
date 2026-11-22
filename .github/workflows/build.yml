@@ -23,4 +23,4 @@ jobs:
       # The generated HTML/JS must match the committed copies; if the build
       # output drifts, the commit forgot to regenerate them.
       - name: generated files in sync
-        run: git diff --exit-code -- public/index.html public/study.html public/assets/js/config.js public/assets/js/tiktok-accounts.js
+        run: git diff --exit-code -- public/index.html public/study.html public/assets/js/config.js public/assets/js/tiktok-accounts.js public/religion-of-peace-and-light/index.html public/books/the-goal-of-the-wise/index.html public/books/the-mahdis-manifesto/index.html

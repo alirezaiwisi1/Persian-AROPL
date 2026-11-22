@@ -32,7 +32,10 @@ const KNOWN_PAGES = new Set([
 
 // Real directories under public/. /admin is the TinaCMS admin SPA
 // (robots-disallowed); it handles its own client-side routing.
-const KNOWN_PREFIXES = ["/assets/", "/admin/"];
+// /books/ and /religion-of-peace-and-light/ hold the dedicated SEO pages
+// (book detail pages + religion overview); a missing file under them still
+// 404s via the ASSETS fetch below.
+const KNOWN_PREFIXES = ["/assets/", "/admin/", "/books/", "/religion-of-peace-and-light/"];
 
 export default {
   async fetch(request, env, ctx) {
