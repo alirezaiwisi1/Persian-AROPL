@@ -38,7 +38,7 @@
     const rest = { y: +stage.dataset.ry, x: +stage.dataset.rx };
     const cur = reduce ? { ...rest } : { y: rest.y - 70, x: rest.x + 10 };
     const tgt = { ...rest };
-    let turns = 0, drag = false, px = 0, py = 0, vis = false, raf = 0;
+    let turns = 0, drag = false, px = 0, py = 0, sx = 0, sy = 0, vis = false, raf = 0;
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const draw = () => {
       if (coarse && !drag) {
@@ -53,8 +53,14 @@
     };
     new IntersectionObserver(([e]) => { vis = e.isIntersecting; if (vis && !raf) draw(); }, { threshold: .1 }).observe(stage);
     if (reduce) { draw(); return; }
-    const end = () => { if (!drag) return; drag = false; turns = Math.round((tgt.y - rest.y) / 360) * 360; tgt.y = rest.y + turns; tgt.x = rest.x; };
-    stage.addEventListener('pointerdown', e => { drag = true; px = e.clientX; py = e.clientY; stage.classList.add('touched'); try { stage.setPointerCapture(e.pointerId); } catch (_) {} });
+    const end = e => {
+      if (!drag) return;
+      drag = false;
+      turns = Math.round((tgt.y - rest.y) / 360) * 360; tgt.y = rest.y + turns; tgt.x = rest.x;
+      // a tap (not a drag) on a book card opens its book page
+      if (e && e.type === 'pointerup' && stage.dataset.page && Math.hypot(e.clientX - sx, e.clientY - sy) < 8) location.href = stage.dataset.page;
+    };
+    stage.addEventListener('pointerdown', e => { drag = true; px = sx = e.clientX; py = sy = e.clientY; stage.classList.add('touched'); try { stage.setPointerCapture(e.pointerId); } catch (_) {} });
     stage.addEventListener('pointermove', e => {
       if (drag) { tgt.y += (e.clientX - px) * .6; tgt.x = clamp(tgt.x - (e.clientY - py) * .25, -25, 25); px = e.clientX; py = e.clientY; }
       else if (e.pointerType === 'mouse') {

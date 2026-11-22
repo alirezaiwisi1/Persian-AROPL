@@ -501,6 +501,8 @@
 .books-stack .book-card--goal .book-stage{order:2}
 .book-stage{position:relative;min-height:620px;display:grid;place-items:center;perspective:1500px;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
   --h:min(440px,46vw);--w:calc(var(--h)*var(--ratio));--t:calc(var(--h)*.085);background:#0b0c0f;border-inline-end:1px solid rgba(255,255,255,.06)}
+/* a book card whose stage links to its book page: click opens it, drag still rotates */
+.book-stage[data-page]{cursor:pointer}
 .book-stage:active{cursor:grabbing}
 .book-card--goal .book-stage{background:#e5e1d5;border-inline-end:0;border-inline-start:1px solid rgba(20,20,20,.08)}
 .stage-glow{position:absolute;inset:0;background:radial-gradient(ellipse 52% 46% at 50% 52%,rgba(253,195,94,.24),transparent 72%)}
@@ -861,6 +863,10 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   background:radial-gradient(ellipse 75% 110% at 50% 0,rgba(253,195,94,.11),transparent 72%),linear-gradient(145deg,#14161a,#0b0d10);
   box-shadow:0 26px 65px rgba(0,0,0,.32);
 }
+/* book/religion pages: the CTA is a direct child of <main>, so contain it to
+   the standard width instead of full-bleed (the study page CTA lives inside
+   .study-shell and is untouched) */
+main > .study-cta{width:min(100% - 40px,var(--max));margin-inline:auto;margin-bottom:clamp(38px,5vw,62px)}
 .study-cta h2{font-size:clamp(1.5rem,3.3vw,2.35rem);font-weight:800;line-height:1.25;margin:10px 0 10px;letter-spacing:-.02em}
 .study-cta p{color:var(--muted);font-size:.92rem;line-height:1.9;margin:0 0 24px}
 .study-cta .cta-actions{margin:0;gap:12px}
@@ -1295,7 +1301,6 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
 .book-hero-body p{color:#ded9d0;font-size:1rem}
 .book-hero-body .book-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px}
 .book-hero-body .book-actions .gold-button,.book-hero-body .book-actions .outline-button{min-height:52px;padding-inline:24px}
-.book-hero-body .book-actions .text-link{min-height:52px;display:inline-flex;align-items:center;padding-inline:6px}
 
 /* Book-card title is now a link to the book page: underline on hover */
 .books-stack .book-body h3 a:hover{text-decoration:underline;text-underline-offset:4px}

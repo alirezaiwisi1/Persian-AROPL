@@ -95,7 +95,7 @@ def must_search(pat, s, what, flags=0):
 
 # --- card templates: VERBATIM markup from the original index.html; only data differs ---
 BOOK_TPL = """        <article class="book-card book-card--{variant} reveal">
-          <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
+          <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}" data-page="{pageUrl}">
             <div class="stage-glow" aria-hidden="true"></div>
             <div class="book-float"><div class="book3d">
               <div class="face face-front"><img src="{cover}" alt="{coverAlt}" width="{coverWidth}" height="1280" loading="lazy" draggable="false"></div>
@@ -278,7 +278,7 @@ BOOK_HERO_TPL = """  <section class="book-hero reveal">
       <div class="book-actions">
         <a class="gold-button" href="{pdfUrl}" target="_blank" rel="noopener">دانلود PDF ↗</a>
         <a class="outline-button" href="{audioUrl}" target="_blank" rel="noopener">خوانش صوتی ↗</a>
-        <a class="text-link" href="{officialUrl}" target="_blank" rel="noopener">دانلود رسمی ↗</a>
+        <a class="outline-button" href="{officialUrl}" target="_blank" rel="noopener">دانلود رسمی ↗</a>
       </div>
     </div>
   </section>"""
