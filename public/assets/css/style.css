@@ -1299,8 +1299,8 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
 .book-hero-body h1 em{font-style:normal;color:var(--gold);font-weight:500}
 .book-hero-author{color:var(--gold);font-weight:700;font-size:.95rem;margin:0 0 18px}
 .book-hero-body p{color:#ded9d0;font-size:1rem}
-.book-hero-body .book-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px}
-.book-hero-body .book-actions .gold-button,.book-hero-body .book-actions .outline-button{min-height:52px;padding-inline:24px}
+/* the hero buttons reuse the homepage card buttons exactly: the hero section
+   carries .books-stack, so .books-stack .book-actions styles them identically */
 
 /* Book-card title is now a link to the book page: underline on hover */
 .books-stack .book-body h3 a:hover{text-decoration:underline;text-underline-offset:4px}
@@ -1314,5 +1314,4 @@ html.has-live-alert{scroll-padding-top:calc(var(--header) + env(safe-area-inset-
 }
 @media(max-width:560px){
   .book-hero-stage .book-stage{min-height:420px}
-  .book-hero-body .book-actions{flex-direction:column;align-items:center}
 }

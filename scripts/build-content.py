@@ -256,7 +256,7 @@ def fill_region(html, name, content):
 # Book detail-page hero: the same 3D book stage as the homepage card, with
 # the title, intro and download actions beside it. All asset paths are
 # root-relative because the page lives under /books/<slug>/.
-BOOK_HERO_TPL = """  <section class="book-hero reveal">
+BOOK_HERO_TPL = """  <section class="book-hero books-stack reveal">
     <div class="book-hero-stage">
       <div class="book-stage spine-{spine}" style="--ratio:{ratio}" data-ry="{ry}" data-rx="{rx}">
         <div class="stage-glow" aria-hidden="true"></div>
@@ -276,9 +276,9 @@ BOOK_HERO_TPL = """  <section class="book-hero reveal">
       <p class="book-hero-author">عبدالله هاشم ابا الصادق</p>
 {intro}
       <div class="book-actions">
-        <a class="gold-button" href="{pdfUrl}" target="_blank" rel="noopener">دانلود PDF ↗</a>
-        <a class="outline-button" href="{audioUrl}" target="_blank" rel="noopener">خوانش صوتی ↗</a>
-        <a class="outline-button" href="{officialUrl}" target="_blank" rel="noopener">دانلود رسمی ↗</a>
+        <a class="gold-button small" href="{pdfUrl}" target="_blank" rel="noopener">مطالعه PDF ↗</a>
+        <a class="outline-button small" href="{audioUrl}" target="_blank" rel="noopener">خوانش صوتی ↗</a>
+        <a class="text-link" href="{officialUrl}" target="_blank" rel="noopener">دانلود رسمی ↗</a>
       </div>
     </div>
   </section>"""
