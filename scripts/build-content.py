@@ -211,9 +211,11 @@ def render_videos(vids):
     vids = [dict(v) for v in reversed(vids)]
     for v in vids:
         normalize_youtube(v)
+    # Thumbnail alt = the video's real title (thumbAlt holds the old generic
+    # default); fall back to thumbAlt if the title is ever empty.
     return BR.join(VIDEO_TPL.format(
         url=esc(v.get("url", "")), auto=' data-auto-title' if v.get("autoTitle") else '',
-        thumb=esc(v.get("thumb", "")), thumbAlt=esc(v.get("thumbAlt", "")),
+        thumb=esc(v.get("thumb", "")), thumbAlt=esc((v.get("title") or "").strip() or v.get("thumbAlt", "")),
         channelLabel=esc(v.get("channelLabel", "")), title=esc(v.get("title", "")),
         ctaLabel=esc(v.get("ctaLabel", ""))) for v in vids)
 
