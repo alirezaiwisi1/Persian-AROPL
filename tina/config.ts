@@ -70,6 +70,15 @@ export default defineConfig({
           { name: "siteLogo", label: "لگوی سایت (هدر + فوتر)", type: "image",
             description: "تصویر مربعی (ترجیحاً PNG/WebP شفاف، حداقل ۵۱۲×۵۱۲). خالی = لگوی پیش‌فرض assets/images/logo.webp." },
           { name: "footerNote", label: "متن فوتر", type: "string" },
+          {
+            name: "footerBrand", label: "برند فوتر (نام، زیرعنوان، لوگو)", type: "object",
+            description: "نام و زیرعنوان برند در فوتر. خالی = پیش‌فرض.",
+            fields: [
+              { name: "name", label: "نام برند", type: "string" },
+              { name: "sub", label: "زیرعنوان", type: "string" },
+              { name: "logo", label: "لوگو", type: "image" },
+            ],
+          },
           { name: "scrollCueText", label: "متن اسکرول‌کنید", type: "string" },
           { name: "ctaKicker", label: "پایان صفحه — کیکر", type: "string" },
           { name: "officialUrl", label: "وب‌سایت رسمی (لینک)", type: "string" },
@@ -102,9 +111,11 @@ export default defineConfig({
         format: "json",
         fields: [
           { name: "variant", label: "شناسه ظاهری (مانند manifesto)", type: "string", description: "CSS modifier روی book-card—" },
+          { name: "order", label: "ترتیب نمایش (عدد کوچک‌تر اول)", type: "number" },
           { name: "coverImage", label: "جلد کتاب", type: "image" },
           { name: "coverAlt", label: "متن جایگزین جلد", type: "string" },
           { name: "coverRatio", label: "نسبت جلد (عرض/ارتفاع)", type: "number" },
+          { name: "coverWidth", label: "عرض تصویر جلد (پیکسل)", type: "number", description: "عرض واقعی فایل جلد؛ در تگ img استفاده می‌شود." },
           { name: "restRotateY", label: "زاویه چرخش Y", type: "number" },
           { name: "restRotateX", label: "زاویه چرخش X", type: "number" },
           { name: "spineLabel", label: "عطف کتاب", type: "string" },

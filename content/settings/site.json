@@ -1,23 +1,4 @@
 {
-  "navLabels": {
-    "books": "کتاب‌ها",
-    "videos": "ویدیوها",
-    "channels": "شبکه‌ها",
-    "about": "درباره",
-    "studyCta": "مطالعه و آشنایی"
-  },
-  "ctaButtons": [
-    {
-      "label": "مشاهده کتاب‌ها",
-      "url": "#books",
-      "style": "gold"
-    },
-    {
-      "label": "وب‌سایت رسمی ↗",
-      "url": "https://theahmadireligion.org/",
-      "style": "outline"
-    }
-  ],
   "footerBrand": {
     "name": "دین صلح و نور احمدی",
     "sub": "HUMANITY FIRST",
