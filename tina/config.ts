@@ -119,6 +119,7 @@ export default defineConfig({
             description: "متن معرفی بالای صفحهٔ اختصاصی کتاب. خط‌های خالی پاراگراف تازه می‌سازند." },
           {
             name: "pageSections", label: "صفحه کتاب — بخش‌ها", type: "object", list: true,
+            description: "بخش‌های صفحهٔ اختصاصی کتاب؛ به همان ترتیبی که اینجا هستند نمایش داده می‌شوند.",
             ui: { itemProps: (item) => ({ label: item?.heading || "بخش" }) },
             fields: [
               { name: "heading", label: "عنوان بخش", type: "string" },
