@@ -1,0 +1,24 @@
+# AROPL FARSI — دین صلح و نور احمدی
+
+> Persian-language site of the Ahmadi Religion of Peace and Light (AROPL),
+> presenting the teachings of Abdullah Hashem Aba Al-Sadiq, the Qa'im of the
+> family of Muhammad. Books, videos and study resources in Persian (and some
+> English), for seekers of truth.
+
+## Pages
+
+- [Home — دین صلح و نور احمدی](https://aroplfarsi.pages.dev/): Books, videos and selected resources.
+- [Religion overview — معرفی دین صلح و نور](https://aroplfarsi.pages.dev/religion-of-peace-and-light/): What the Ahmadi Religion of Peace and Light is, who Abdullah Hashem Aba Al-Sadiq is, the holy will, and the black banner.
+- [The Goal of the Wise — دانلود کتاب هدف حکیم](https://aroplfarsi.pages.dev/books/the-goal-of-the-wise/): The book "The Goal of the Wise" (December 2022, 42 chapters). Persian PDF download, audio reading, official download. Winner — Italy International Book Award 2025.
+- [The Mahdi's Manifesto — دانلود مانیفست مهدی](https://aroplfarsi.pages.dev/books/the-mahdis-manifesto/): The 31-page booklet "The Mahdi's Manifesto" (2024). Persian PDF download, audio reading, official download.
+- [Study — مطالعه](https://aroplfarsi.pages.dev/study): Study texts and resources in Persian and English.
+
+## Books (PDF, Persian)
+
+- [The Goal of the Wise — Persian PDF](https://aroplfarsi.pages.dev/assets/pdf/The-Goal-of-the-Wise-Persian.pdf)
+- [The Mahdi's Manifesto — Persian PDF](https://aroplfarsi.pages.dev/assets/pdf/The_Mahdis_Manifesto_Booklet_Farsi.pdf)
+
+## Official source
+
+- [The Ahmadi Religion — official website](https://theahmadireligion.org/)
+- [The Goal of the Wise — English PDF](https://theahmadireligion.org/wp-content/uploads/2024/01/The-Goal-of-the-Wise-English.pdf)

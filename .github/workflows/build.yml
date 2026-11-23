@@ -15,6 +15,20 @@ jobs:
       - run: pip install -r scripts/requirements.txt
       - run: python3 scripts/test_build_content.py
       - run: python3 scripts/build-content.py
+      # TinaCMS build: validates tina/config.ts and regenerates
+      # tina/tina-lock.json. The lock is the schema Tina Cloud reads, so a
+      # stale lock (config changed, lock not regenerated) must fail here,
+      # not at deploy time. --local needs no Tina Cloud credentials.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - run: pnpm install --frozen-lockfile
+      - run: npx tinacms build --skip-cloud-checks --local
+      - name: tina lock in sync
+        run: git diff --exit-code -- tina/tina-lock.json
       - name: syntax-check JavaScript
         run: |
           for f in public/assets/js/*.js worker/index.js; do

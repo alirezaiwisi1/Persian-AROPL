@@ -25,6 +25,7 @@ const KNOWN_PAGES = new Set([
   "/study.html",
   "/robots.txt",
   "/sitemap.xml",
+  "/llms.txt",
   "/manifest.json",
   "/404.html",
   "/admin",
