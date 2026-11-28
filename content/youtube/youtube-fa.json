@@ -182,6 +182,15 @@
       "channelLabel": "ویدیوی فارسی",
       "title": "اسطوره‌ی اِر- زندگی پس از مرگ از نگاه سقراط",
       "ctaLabel": "مشاهده در YouTube ↗"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=6-5OQZt9_g4",
+      "autoTitle": false,
+      "thumb": "https://i.ytimg.com/vi/6-5OQZt9_g4/hqdefault.jpg",
+      "thumbAlt": "ویدیوی منتخب فارسی",
+      "channelLabel": "ویدیوی فارسی",
+      "title": "اشتباهی که شر را زایید",
+      "ctaLabel": "مشاهده در YouTube ↗"
     }
   ]
 }
