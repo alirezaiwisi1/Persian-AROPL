@@ -5,7 +5,11 @@ name: youtube-watcher
 # token, so GitHub rejected every commit with 401 and new videos never
 # reached the repo. This workflow needs no stored token: it commits with
 # the built-in GITHUB_TOKEN GitHub issues fresh for every run.
-# Schedule: every 30 minutes, same cadence as the old pg_cron job.
+# Schedule: twice an hour at :07 and :37. GitHub queues every repo's
+# "top of the hour" schedules together and delays or drops many of them
+# under load (this repo's */30 job was firing only every 6-9 hours, so
+# new videos waited most of a day). Off-peak minutes run far more
+# reliably; workflow_dispatch stays for an on-demand run.
 # After this workflow's first successful run, unschedule the Supabase
 # job so the two watchers do not race:
 #   Supabase Dashboard -> SQL Editor -> select cron.unschedule('aropl-yt-watcher');
@@ -14,7 +18,7 @@ name: youtube-watcher
 # site: the user still deploys manually from the Cloudflare dashboard.
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "7,37 * * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -25,8 +29,8 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install -r scripts/requirements.txt
